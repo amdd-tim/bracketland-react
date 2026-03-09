@@ -1,86 +1,47 @@
-import { useState } from 'react';
-import type { ChangeEvent } from 'react';
+import { useEffect, useState } from 'react';
 import type { Team } from './lib/types';
 import type { TournamentRound } from './lib/simulation';
-import { teams, roundOneMatchups } from './lib/data';
 import { parseCsv, rowsToTeams } from './lib/csv';
-import {
-  generateRoundOneMatchups,
-  simulateTournament,
-} from './lib/simulation';
-import TeamCard from './components/TeamCard';
+import { generateRoundOneMatchups, simulateTournament } from './lib/simulation';
 import BracketView from './components/BracketView';
+import TeamCard from './components/TeamCard';
 
 function App() {
-  const [showTeams, setShowTeams] = useState(true);
-  const [selectedFileName, setSelectedFileName] = useState('');
-  const [csvText, setCsvText] = useState('');
+  const [teams, setTeams] = useState<Team[]>([]);
+  const [tournamentRounds, setTournamentRounds] = useState<TournamentRound[]>([]);
+  const [showTeams, setShowTeams] = useState(false);
 
-  const parsedRows = parseCsv(csvText);
-  const uploadedTeams = rowsToTeams(parsedRows);
-  const teamsToDisplay = uploadedTeams.length > 0 ? uploadedTeams : teams;
+  useEffect(() => {
+    async function loadData() {
+      const response = await fetch('/data/mm-data-2024.csv');
+      const text = await response.text();
 
-  const activeRoundOneMatchups =
-    uploadedTeams.length > 1
-      ? generateRoundOneMatchups(uploadedTeams)
-      : roundOneMatchups;
+      const rows = parseCsv(text);
+      const loadedTeams = rowsToTeams(rows);
 
-  const [tournamentRounds, setTournamentRounds] = useState<TournamentRound[]>(() =>
-    simulateTournament(roundOneMatchups)
-  );
+      const matchups = generateRoundOneMatchups(loadedTeams);
+      const tournament = simulateTournament(matchups);
+
+      setTeams(loadedTeams);
+      setTournamentRounds(tournament);
+    }
+
+    loadData();
+  }, []);
 
   function generateBracket() {
-    setTournamentRounds(simulateTournament(activeRoundOneMatchups));
-  }
-
-  function resetToSampleData() {
-    setSelectedFileName('');
-    setCsvText('');
-    setTournamentRounds(simulateTournament(roundOneMatchups));
-  }
-
-  async function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0];
-
-    if (!file) {
-      resetToSampleData();
-      return;
-    }
-
-    setSelectedFileName(file.name);
-
-    const text = await file.text();
-    setCsvText(text);
-
-    const nextRows = parseCsv(text);
-    const nextUploadedTeams = rowsToTeams(nextRows);
-
-    if (nextUploadedTeams.length > 1) {
-      const nextMatchups = generateRoundOneMatchups(nextUploadedTeams);
-      setTournamentRounds(simulateTournament(nextMatchups));
-      return;
-    }
-
-    setTournamentRounds(simulateTournament(roundOneMatchups));
+    const matchups = generateRoundOneMatchups(teams);
+    const tournament = simulateTournament(matchups);
+    setTournamentRounds(tournament);
   }
 
   return (
     <main>
       <h1>Bracketland</h1>
-      <p>React learning project is running.</p>
-
-      <section>
-        <h2>Upload Rankings CSV</h2>
-        <input type="file" accept=".csv" onChange={handleFileChange} />
-        {selectedFileName && <p>Selected file: {selectedFileName}</p>}
-        {selectedFileName && (
-          <button onClick={resetToSampleData}>Reset to Sample Data</button>
-        )}
-      </section>
 
       <button onClick={generateBracket}>Generate Bracket</button>
 
-      <BracketView tournamentRounds={tournamentRounds} teams={teamsToDisplay} />
+      <BracketView tournamentRounds={tournamentRounds} teams={teams} />
 
       <button onClick={() => setShowTeams(!showTeams)}>
         {showTeams ? 'Hide Teams' : 'Show Teams'}
@@ -88,9 +49,9 @@ function App() {
 
       {showTeams && (
         <>
-          <h2>{uploadedTeams.length > 0 ? 'Uploaded Teams' : 'All Teams'}</h2>
+          <h2>All Teams</h2>
 
-          {teamsToDisplay.map((team: Team) => (
+          {teams.map((team) => (
             <TeamCard key={team.id} team={team} />
           ))}
         </>
