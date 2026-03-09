@@ -17,45 +17,6 @@ export function getMatchupWinner(matchup: Matchup): Team {
   return teamB;
 }
 
-export function generateBracketResults(roundOneMatchups: Matchup[]): Record<string, Team> {
-  const winners: Record<string, Team> = {};
-
-  roundOneMatchups.forEach((matchup) => {
-    winners[matchup.id] = getMatchupWinner(matchup);
-  });
-
-  const championshipMatchup: Matchup = {
-    id: 'matchup-3',
-    teamA: winners['matchup-1'],
-    teamB: winners['matchup-2'],
-  };
-
-  winners[championshipMatchup.id] = getMatchupWinner(championshipMatchup);
-
-  return winners;
-}
-
-export function generateRoundOneMatchups(teams: Team[]): Matchup[] {
-  const matchups: Matchup[] = [];
-
-  for (let i = 0; i < teams.length; i += 2) {
-    const teamA = teams[i];
-    const teamB = teams[i + 1];
-
-    if (!teamA || !teamB) {
-      continue;
-    }
-
-    matchups.push({
-      id: `matchup-${i / 2 + 1}`,
-      teamA,
-      teamB,
-    });
-  }
-
-  return matchups;
-}
-
 export function generateNextRoundMatchups(winners: Team[]): Matchup[] {
   const matchups: Matchup[] = [];
 
@@ -63,7 +24,9 @@ export function generateNextRoundMatchups(winners: Team[]): Matchup[] {
     const teamA = winners[i];
     const teamB = winners[i + 1];
 
-    if (!teamA || !teamB) continue;
+    if (!teamA || !teamB) {
+      continue;
+    }
 
     matchups.push({
       id: `next-${i / 2 + 1}`,
@@ -136,4 +99,61 @@ function getRoundName(matchupCount: number): string {
     default:
       return `Round with ${matchupCount} matchups`;
   }
+}
+
+export function generateRoundOneMatchups(teams: Team[]): Matchup[] {
+  const regions = ['East', 'West', 'South', 'Midwest'];
+  const allMatchups: Matchup[] = [];
+  let matchupNumber = 1;
+
+  regions.forEach((region) => {
+    const regionTeams = teams.filter((team) => team.region === region);
+    const regionMatchups = generateRegionRoundOneMatchups(regionTeams);
+
+    regionMatchups.forEach((matchup) => {
+      allMatchups.push({
+        ...matchup,
+        id: `matchup-${matchupNumber}`,
+      });
+      matchupNumber += 1;
+    });
+  });
+
+  return allMatchups;
+}
+
+function generateRegionRoundOneMatchups(teams: Team[]): Matchup[] {
+  const teamsBySeed = new Map<number, Team>();
+
+  teams.forEach((team) => {
+    teamsBySeed.set(team.seed, team);
+  });
+
+  const seedPairs: Array<[number, number]> = [
+    [1, 16],
+    [8, 9],
+    [5, 12],
+    [4, 13],
+    [6, 11],
+    [3, 14],
+    [7, 10],
+    [2, 15],
+  ];
+
+  return seedPairs
+    .map(([seedA, seedB]) => {
+      const teamA = teamsBySeed.get(seedA);
+      const teamB = teamsBySeed.get(seedB);
+
+      if (!teamA || !teamB) {
+        return null;
+      }
+
+      return {
+        id: '',
+        teamA,
+        teamB,
+      } satisfies Matchup;
+    })
+    .filter((matchup): matchup is Matchup => matchup !== null);
 }
