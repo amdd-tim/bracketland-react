@@ -7,7 +7,13 @@ type BracketViewProps = {
 };
 
 function BracketView({ tournamentRounds, teams }: BracketViewProps) {
-  const regions = ['East', 'West', 'South', 'Midwest'];
+  const leftRegions = ['East', 'West'];
+  const rightRegions = ['South', 'Midwest'];
+
+  const champion =
+    tournamentRounds.length > 0
+      ? tournamentRounds[tournamentRounds.length - 1].winners[0]
+      : null;
 
   return (
     <section>
@@ -16,78 +22,127 @@ function BracketView({ tournamentRounds, teams }: BracketViewProps) {
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
-          gap: '1rem',
+          gridTemplateColumns: '1fr 320px 1fr',
+          gap: '1.5rem',
           alignItems: 'start',
+          overflowX: 'auto',
         }}
       >
-        {regions.map((region) => {
-          const regionTeams = teams.filter((team) => team.region === region);
-          const firstRoundGames = buildRegionFirstRound(regionTeams);
+        <RegionSide regions={leftRegions} teams={teams} />
 
-          return (
-            <section
-              key={region}
+        <section
+          style={{
+            background: 'white',
+            border: '1px solid #ddd',
+            borderRadius: '1rem',
+            padding: '1rem',
+            alignSelf: 'stretch',
+          }}
+        >
+          <h3 style={{ marginBottom: '1rem' }}>Final Rounds</h3>
+
+          {tournamentRounds.slice(-3).map((round) => (
+            <section key={round.name} style={{ marginBottom: '1.5rem' }}>
+              <h4 style={{ marginBottom: '0.75rem' }}>{round.name}</h4>
+              <p>{round.matchups.length} matchup{round.matchups.length !== 1 ? 's' : ''}</p>
+            </section>
+          ))}
+
+          {champion && (
+            <div
               style={{
-                background: 'white',
-                border: '1px solid #ddd',
-                borderRadius: '0.75rem',
-                padding: '1rem',
+                marginTop: '1.5rem',
+                paddingTop: '1rem',
+                borderTop: '1px solid #eee',
               }}
             >
-              <h3>{region}</h3>
+              <h4>Champion</h4>
+              <p>
+                <strong>{champion.name}</strong>
+              </p>
+            </div>
+          )}
+        </section>
 
-              <div
-                style={{
-                  display: 'grid',
-                  gap: '0.75rem',
-                }}
-              >
-                {firstRoundGames.map((game, index) => (
-                  <div
-                    key={`${region}-game-${index}`}
-                    style={{
-                      border: '1px solid #ddd',
-                      borderRadius: '0.5rem',
-                      overflow: 'hidden',
-                    }}
-                  >
-                    <TeamRow team={game[0]} />
-                    <TeamRow team={game[1]} />
-                  </div>
-                ))}
-              </div>
-            </section>
-          );
-        })}
-      </div>
-
-      <div style={{ marginTop: '2rem' }}>
-        <h3>Champion</h3>
-        <p>
-          {tournamentRounds.length > 0
-            ? tournamentRounds[tournamentRounds.length - 1].winners[0].name
-            : 'No champion yet'}
-        </p>
+        <RegionSide regions={rightRegions} teams={teams} />
       </div>
     </section>
   );
 }
 
-type TeamRowProps = {
+type RegionSideProps = {
+  regions: string[];
+  teams: Team[];
+};
+
+function RegionSide({ regions, teams }: RegionSideProps) {
+  return (
+    <div
+      style={{
+        display: 'grid',
+        gap: '1.5rem',
+      }}
+    >
+      {regions.map((region) => {
+        const regionTeams = teams.filter((team) => team.region === region);
+        const firstRoundGames = buildRegionFirstRound(regionTeams);
+
+        return (
+          <section
+            key={region}
+            style={{
+              background: 'white',
+              border: '1px solid #ddd',
+              borderRadius: '1rem',
+              padding: '1rem',
+            }}
+          >
+            <h3 style={{ marginBottom: '1rem' }}>{region}</h3>
+
+            <div
+              style={{
+                display: 'grid',
+                gap: '0.75rem',
+              }}
+            >
+              {firstRoundGames.map((game, index) => (
+                <div
+                  key={`${region}-game-${index}`}
+                  style={{
+                    background: '#fff',
+                    border: '1px solid #ddd',
+                    borderRadius: '0.75rem',
+                    overflow: 'hidden',
+                  }}
+                >
+                  <TeamLine team={game[0]} />
+                  <TeamLine team={game[1]} />
+                </div>
+              ))}
+            </div>
+          </section>
+        );
+      })}
+    </div>
+  );
+}
+
+type TeamLineProps = {
   team?: Team;
 };
 
-function TeamRow({ team }: TeamRowProps) {
+function TeamLine({ team }: TeamLineProps) {
   if (!team) {
     return (
       <div
         style={{
-          padding: '0.6rem 0.75rem',
+          display: 'flex',
+          gap: '0.5rem',
+          padding: '0.65rem 0.75rem',
           borderBottom: '1px solid #eee',
         }}
       >
-        —
+        <span>—</span>
       </div>
     );
   }
@@ -97,11 +152,11 @@ function TeamRow({ team }: TeamRowProps) {
       style={{
         display: 'flex',
         gap: '0.5rem',
-        padding: '0.6rem 0.75rem',
+        padding: '0.65rem 0.75rem',
         borderBottom: '1px solid #eee',
       }}
     >
-      <strong style={{ minWidth: '1.5rem' }}>{team.seed}</strong>
+      <span style={{ minWidth: '1.5rem', fontWeight: 700 }}>{team.seed}</span>
       <span>{team.name}</span>
     </div>
   );
