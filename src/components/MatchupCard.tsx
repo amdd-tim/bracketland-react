@@ -7,8 +7,16 @@ type MatchupCardProps = {
 
 function MatchupCard({ matchup, winner }: MatchupCardProps) {
   return (
-    <section>
-      <h2>Matchup</h2>
+    <section
+      style={{
+        padding: '1rem',
+        marginBottom: '1rem',
+        background: 'white',
+        border: '1px solid #ddd',
+        borderRadius: '0.75rem',
+      }}
+    >
+      <h3>Matchup</h3>
       <p>
         {matchup.teamA.name} vs {matchup.teamB.name}
       </p>
