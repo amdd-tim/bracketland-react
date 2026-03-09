@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import type { ChangeEvent } from 'react';
 import type { Matchup, Team } from './lib/types';
 import { teams, roundOneMatchups } from './lib/data';
@@ -20,13 +20,10 @@ function App() {
   const uploadedTeams = rowsToTeams(parsedRows);
   const teamsToDisplay = uploadedTeams.length > 0 ? uploadedTeams : teams;
 
-  const activeRoundOneMatchups = useMemo(() => {
-    if (uploadedTeams.length > 1) {
-      return generateRoundOneMatchups(uploadedTeams);
-    }
-
-    return roundOneMatchups;
-  }, [uploadedTeams]);
+  const activeRoundOneMatchups =
+  uploadedTeams.length > 1
+    ? generateRoundOneMatchups(uploadedTeams)
+    : roundOneMatchups;
 
   const [winners, setWinners] = useState<Record<string, Team>>(() =>
     generateRoundOneWinners(roundOneMatchups)
