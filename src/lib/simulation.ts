@@ -74,3 +74,18 @@ export function generateNextRoundMatchups(winners: Team[]): Matchup[] {
 
   return matchups;
 }
+
+export type SimulatedRound = {
+  winners: Team[];
+  nextMatchups: Matchup[];
+};
+
+export function simulateRound(matchups: Matchup[]): SimulatedRound {
+  const winners = matchups.map((matchup) => getMatchupWinner(matchup));
+  const nextMatchups = generateNextRoundMatchups(winners);
+
+  return {
+    winners,
+    nextMatchups,
+  };
+}

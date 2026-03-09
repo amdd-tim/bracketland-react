@@ -4,9 +4,10 @@ import type { Matchup, Team } from './lib/types';
 import { teams, roundOneMatchups } from './lib/data';
 import { parseCsv, rowsToTeams } from './lib/csv';
 import {
-  generateRoundOneMatchups,
   generateNextRoundMatchups,
-  getMatchupWinner
+  generateRoundOneMatchups,
+  getMatchupWinner,
+  simulateRound,
 } from './lib/simulation';
 import MatchupCard from './components/MatchupCard';
 import TeamCard from './components/TeamCard';
@@ -92,12 +93,13 @@ function App() {
         );
 
         const roundTwoMatchups = generateNextRoundMatchups(roundOneWinners);
+        const roundTwo = simulateRound(roundTwoMatchups);
 
-        return roundTwoMatchups.map((matchup) => (
+        return roundTwoMatchups.map((matchup, index) => (
           <MatchupCard
             key={matchup.id}
             matchup={matchup}
-            winner={getMatchupWinner(matchup)}
+            winner={roundTwo.winners[index]}
           />
         ));
       })()}
