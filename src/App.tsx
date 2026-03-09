@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import type { ChangeEvent } from 'react';
-import type { Matchup, Team } from './lib/types';
+import type { Team } from './lib/types';
+import type { TournamentRound } from './lib/simulation';
 import { teams, roundOneMatchups } from './lib/data';
 import { parseCsv, rowsToTeams } from './lib/csv';
 import {
   generateRoundOneMatchups,
-  getMatchupWinner,
   simulateTournament,
 } from './lib/simulation';
 import MatchupCard from './components/MatchupCard';
@@ -21,19 +21,17 @@ function App() {
   const teamsToDisplay = uploadedTeams.length > 0 ? uploadedTeams : teams;
 
   const activeRoundOneMatchups =
-  uploadedTeams.length > 1
-    ? generateRoundOneMatchups(uploadedTeams)
-    : roundOneMatchups;
+    uploadedTeams.length > 1
+      ? generateRoundOneMatchups(uploadedTeams)
+      : roundOneMatchups;
 
-  const [winners, setWinners] = useState<Record<string, Team>>(() =>
-    generateRoundOneWinners(roundOneMatchups)
+  const [tournamentRounds, setTournamentRounds] = useState<TournamentRound[]>(() =>
+    simulateTournament(roundOneMatchups)
   );
 
   function generateBracket() {
-    setWinners(generateRoundOneWinners(activeRoundOneMatchups));
+    setTournamentRounds(simulateTournament(activeRoundOneMatchups));
   }
-
-  const tournamentRounds = simulateTournament(activeRoundOneMatchups);
 
   async function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -41,7 +39,7 @@ function App() {
     if (!file) {
       setSelectedFileName('');
       setCsvText('');
-      setWinners(generateRoundOneWinners(roundOneMatchups));
+      setTournamentRounds(simulateTournament(roundOneMatchups));
       return;
     }
 
@@ -55,12 +53,17 @@ function App() {
 
     if (nextUploadedTeams.length > 1) {
       const nextMatchups = generateRoundOneMatchups(nextUploadedTeams);
-      setWinners(generateRoundOneWinners(nextMatchups));
+      setTournamentRounds(simulateTournament(nextMatchups));
       return;
     }
 
-    setWinners(generateRoundOneWinners(roundOneMatchups));
+    setTournamentRounds(simulateTournament(roundOneMatchups));
   }
+
+  const champion =
+    tournamentRounds.length > 0
+      ? tournamentRounds[tournamentRounds.length - 1].winners[0]
+      : null;
 
   return (
     <main>
@@ -71,10 +74,15 @@ function App() {
         <h2>Upload Rankings CSV</h2>
         <input type="file" accept=".csv" onChange={handleFileChange} />
         {selectedFileName && <p>Selected file: {selectedFileName}</p>}
-        {csvText && <pre>{JSON.stringify(parsedRows, null, 2)}</pre>}
       </section>
 
       <button onClick={generateBracket}>Generate Bracket</button>
+
+      {champion && (
+        <p>
+          Champion: <strong>{champion.name}</strong>
+        </p>
+      )}
 
       {tournamentRounds.map((round) => (
         <section key={round.name}>
@@ -98,23 +106,13 @@ function App() {
         <>
           <h2>{uploadedTeams.length > 0 ? 'Uploaded Teams' : 'All Teams'}</h2>
 
-          {teamsToDisplay.map((team) => (
+          {teamsToDisplay.map((team: Team) => (
             <TeamCard key={team.id} team={team} />
           ))}
         </>
       )}
     </main>
   );
-}
-
-function generateRoundOneWinners(matchups: Matchup[]): Record<string, Team> {
-  const nextWinners: Record<string, Team> = {};
-
-  matchups.forEach((matchup) => {
-    nextWinners[matchup.id] = getMatchupWinner(matchup);
-  });
-
-  return nextWinners;
 }
 
 export default App;
