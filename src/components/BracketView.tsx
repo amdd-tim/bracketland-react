@@ -22,7 +22,11 @@ function BracketView({ tournamentRounds, teams }: BracketViewProps) {
         }}
       >
         {regions.map((region) => {
-          const regionTeams = teams.filter((team) => team.region === region);
+          const regionTeams = teams
+            .filter((team) => team.region === region)
+            .sort((a, b) => a.seed - b.seed);
+
+          const firstRoundGames = chunkTeams(regionTeams);
 
           return (
             <section
@@ -36,21 +40,26 @@ function BracketView({ tournamentRounds, teams }: BracketViewProps) {
             >
               <h3>{region}</h3>
 
-              <p>
-                Teams: <strong>{regionTeams.length}</strong>
-              </p>
-
-              {regionTeams.map((team) => (
-                <div
-                  key={team.id}
-                  style={{
-                    padding: '0.5rem 0',
-                    borderBottom: '1px solid #eee',
-                  }}
-                >
-                  <strong>{team.seed}</strong> {team.name}
-                </div>
-              ))}
+              <div
+                style={{
+                  display: 'grid',
+                  gap: '0.75rem',
+                }}
+              >
+                {firstRoundGames.map((game, index) => (
+                  <div
+                    key={`${region}-game-${index}`}
+                    style={{
+                      border: '1px solid #ddd',
+                      borderRadius: '0.5rem',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <TeamRow team={game[0]} />
+                    <TeamRow team={game[1]} />
+                  </div>
+                ))}
+              </div>
             </section>
           );
         })}
@@ -66,6 +75,49 @@ function BracketView({ tournamentRounds, teams }: BracketViewProps) {
       </div>
     </section>
   );
+}
+
+type TeamRowProps = {
+  team?: Team;
+};
+
+function TeamRow({ team }: TeamRowProps) {
+  if (!team) {
+    return (
+      <div
+        style={{
+          padding: '0.6rem 0.75rem',
+          borderBottom: '1px solid #eee',
+        }}
+      >
+        —
+      </div>
+    );
+  }
+
+  return (
+    <div
+      style={{
+        display: 'flex',
+        gap: '0.5rem',
+        padding: '0.6rem 0.75rem',
+        borderBottom: '1px solid #eee',
+      }}
+    >
+      <strong style={{ minWidth: '1.5rem' }}>{team.seed}</strong>
+      <span>{team.name}</span>
+    </div>
+  );
+}
+
+function chunkTeams(teams: Team[]): Array<[Team | undefined, Team | undefined]> {
+  const chunks: Array<[Team | undefined, Team | undefined]> = [];
+
+  for (let i = 0; i < teams.length; i += 2) {
+    chunks.push([teams[i], teams[i + 1]]);
+  }
+
+  return chunks;
 }
 
 export default BracketView;
