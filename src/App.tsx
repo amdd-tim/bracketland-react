@@ -4,10 +4,9 @@ import type { Matchup, Team } from './lib/types';
 import { teams, roundOneMatchups } from './lib/data';
 import { parseCsv, rowsToTeams } from './lib/csv';
 import {
-  generateNextRoundMatchups,
   generateRoundOneMatchups,
   getMatchupWinner,
-  simulateRound,
+  simulateTournament,
 } from './lib/simulation';
 import MatchupCard from './components/MatchupCard';
 import TeamCard from './components/TeamCard';
@@ -33,6 +32,8 @@ function App() {
   function generateBracket() {
     setWinners(generateRoundOneWinners(activeRoundOneMatchups));
   }
+
+  const tournamentRounds = simulateTournament(activeRoundOneMatchups);
 
   async function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -75,34 +76,19 @@ function App() {
 
       <button onClick={generateBracket}>Generate Bracket</button>
 
-      <h2>Round 1</h2>
+      {tournamentRounds.map((round) => (
+        <section key={round.name}>
+          <h2>{round.name}</h2>
 
-      {activeRoundOneMatchups.map((matchup) => (
-        <MatchupCard
-          key={matchup.id}
-          matchup={matchup}
-          winner={winners[matchup.id]}
-        />
+          {round.matchups.map((matchup, index) => (
+            <MatchupCard
+              key={matchup.id}
+              matchup={matchup}
+              winner={round.winners[index]}
+            />
+          ))}
+        </section>
       ))}
-
-      <h2>Round of 32</h2>
-
-      {(() => {
-        const roundOneWinners = activeRoundOneMatchups.map(
-          (matchup) => winners[matchup.id]
-        );
-
-        const roundTwoMatchups = generateNextRoundMatchups(roundOneWinners);
-        const roundTwo = simulateRound(roundTwoMatchups);
-
-        return roundTwoMatchups.map((matchup, index) => (
-          <MatchupCard
-            key={matchup.id}
-            matchup={matchup}
-            winner={roundTwo.winners[index]}
-          />
-        ));
-      })()}
 
       <button onClick={() => setShowTeams(!showTeams)}>
         {showTeams ? 'Hide Teams' : 'Show Teams'}

@@ -89,3 +89,51 @@ export function simulateRound(matchups: Matchup[]): SimulatedRound {
     nextMatchups,
   };
 }
+
+export type TournamentRound = {
+  name: string;
+  matchups: Matchup[];
+  winners: Team[];
+};
+
+export function simulateTournament(initialMatchups: Matchup[]): TournamentRound[] {
+  const rounds: TournamentRound[] = [];
+  let currentMatchups = initialMatchups;
+
+  while (currentMatchups.length > 0) {
+    const winners = currentMatchups.map((matchup) => getMatchupWinner(matchup));
+
+    rounds.push({
+      name: getRoundName(currentMatchups.length),
+      matchups: currentMatchups,
+      winners,
+    });
+
+    if (winners.length === 1) {
+      break;
+    }
+
+    currentMatchups = generateNextRoundMatchups(winners);
+  }
+
+  return rounds;
+}
+
+function getRoundName(matchupCount: number): string {
+  switch (matchupCount) {
+    case 32:
+      return 'Round of 64';
+    case 16:
+      return 'Round of 32';
+    case 8:
+      return 'Sweet 16';
+    case 4:
+      return 'Elite 8';
+    case 2:
+      return 'Final Four';
+    case 1:
+      return 'Championship';
+    default:
+      return `Round with ${matchupCount} matchups`;
+  }
+}
