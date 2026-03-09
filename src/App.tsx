@@ -87,14 +87,17 @@ function App() {
       <h2>Round of 32</h2>
 
       {(() => {
-        const roundOneWinners = Object.values(winners);
-        const nextMatchups = generateNextRoundMatchups(roundOneWinners);
+        const roundOneWinners = activeRoundOneMatchups.map(
+          (matchup) => winners[matchup.id]
+        );
 
-        return nextMatchups.map((matchup) => (
+        const roundTwoMatchups = generateNextRoundMatchups(roundOneWinners);
+
+        return roundTwoMatchups.map((matchup) => (
           <MatchupCard
             key={matchup.id}
             matchup={matchup}
-            winner={matchup.teamA} // placeholder winner
+            winner={getMatchupWinner(matchup)}
           />
         ));
       })()}
