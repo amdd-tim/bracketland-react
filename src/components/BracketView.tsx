@@ -22,11 +22,8 @@ function BracketView({ tournamentRounds, teams }: BracketViewProps) {
         }}
       >
         {regions.map((region) => {
-          const regionTeams = teams
-            .filter((team) => team.region === region)
-            .sort((a, b) => a.seed - b.seed);
-
-          const firstRoundGames = chunkTeams(regionTeams);
+          const regionTeams = teams.filter((team) => team.region === region);
+          const firstRoundGames = buildRegionFirstRound(regionTeams);
 
           return (
             <section
@@ -110,14 +107,30 @@ function TeamRow({ team }: TeamRowProps) {
   );
 }
 
-function chunkTeams(teams: Team[]): Array<[Team | undefined, Team | undefined]> {
-  const chunks: Array<[Team | undefined, Team | undefined]> = [];
+function buildRegionFirstRound(
+  teams: Team[]
+): Array<[Team | undefined, Team | undefined]> {
+  const teamsBySeed = new Map<number, Team>();
 
-  for (let i = 0; i < teams.length; i += 2) {
-    chunks.push([teams[i], teams[i + 1]]);
-  }
+  teams.forEach((team) => {
+    teamsBySeed.set(team.seed, team);
+  });
 
-  return chunks;
+  const seedPairs: Array<[number, number]> = [
+    [1, 16],
+    [8, 9],
+    [5, 12],
+    [4, 13],
+    [6, 11],
+    [3, 14],
+    [7, 10],
+    [2, 15],
+  ];
+
+  return seedPairs.map(([seedA, seedB]) => [
+    teamsBySeed.get(seedA),
+    teamsBySeed.get(seedB),
+  ]);
 }
 
 export default BracketView;
