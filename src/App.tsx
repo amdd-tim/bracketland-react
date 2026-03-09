@@ -3,7 +3,11 @@ import type { ChangeEvent } from 'react';
 import type { Matchup, Team } from './lib/types';
 import { teams, roundOneMatchups } from './lib/data';
 import { parseCsv, rowsToTeams } from './lib/csv';
-import { generateRoundOneMatchups, getMatchupWinner } from './lib/simulation';
+import {
+  generateRoundOneMatchups,
+  generateNextRoundMatchups,
+  getMatchupWinner
+} from './lib/simulation';
 import MatchupCard from './components/MatchupCard';
 import TeamCard from './components/TeamCard';
 
@@ -82,6 +86,21 @@ function App() {
           winner={winners[matchup.id]}
         />
       ))}
+
+      <h2>Round of 32</h2>
+
+      {(() => {
+        const roundOneWinners = Object.values(winners);
+        const nextMatchups = generateNextRoundMatchups(roundOneWinners);
+
+        return nextMatchups.map((matchup) => (
+          <MatchupCard
+            key={matchup.id}
+            matchup={matchup}
+            winner={matchup.teamA} // placeholder winner
+          />
+        ));
+      })()}
 
       <button onClick={() => setShowTeams(!showTeams)}>
         {showTeams ? 'Hide Teams' : 'Show Teams'}

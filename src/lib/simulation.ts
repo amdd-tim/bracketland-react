@@ -55,3 +55,22 @@ export function generateRoundOneMatchups(teams: Team[]): Matchup[] {
 
   return matchups;
 }
+
+export function generateNextRoundMatchups(winners: Team[]): Matchup[] {
+  const matchups: Matchup[] = [];
+
+  for (let i = 0; i < winners.length; i += 2) {
+    const teamA = winners[i];
+    const teamB = winners[i + 1];
+
+    if (!teamA || !teamB) continue;
+
+    matchups.push({
+      id: `next-${i / 2 + 1}`,
+      teamA,
+      teamB,
+    });
+  }
+
+  return matchups;
+}
