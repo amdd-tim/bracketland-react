@@ -8,8 +8,8 @@ import {
   generateRoundOneMatchups,
   simulateTournament,
 } from './lib/simulation';
-import MatchupCard from './components/MatchupCard';
 import TeamCard from './components/TeamCard';
+import BracketView from './components/BracketView';
 
 function App() {
   const [showTeams, setShowTeams] = useState(true);
@@ -64,11 +64,6 @@ function App() {
     setTournamentRounds(simulateTournament(roundOneMatchups));
   }
 
-  const champion =
-    tournamentRounds.length > 0
-      ? tournamentRounds[tournamentRounds.length - 1].winners[0]
-      : null;
-
   return (
     <main>
       <h1>Bracketland</h1>
@@ -85,25 +80,7 @@ function App() {
 
       <button onClick={generateBracket}>Generate Bracket</button>
 
-      {champion && (
-        <p>
-          Champion: <strong>{champion.name}</strong>
-        </p>
-      )}
-
-      {tournamentRounds.map((round) => (
-        <section key={round.name}>
-          <h2>{round.name}</h2>
-
-          {round.matchups.map((matchup, index) => (
-            <MatchupCard
-              key={matchup.id}
-              matchup={matchup}
-              winner={round.winners[index]}
-            />
-          ))}
-        </section>
-      ))}
+      <BracketView tournamentRounds={tournamentRounds} teams={teamsToDisplay} />
 
       <button onClick={() => setShowTeams(!showTeams)}>
         {showTeams ? 'Hide Teams' : 'Show Teams'}
