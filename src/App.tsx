@@ -33,13 +33,17 @@ function App() {
     setTournamentRounds(simulateTournament(activeRoundOneMatchups));
   }
 
+  function resetToSampleData() {
+    setSelectedFileName('');
+    setCsvText('');
+    setTournamentRounds(simulateTournament(roundOneMatchups));
+  }
+
   async function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
 
     if (!file) {
-      setSelectedFileName('');
-      setCsvText('');
-      setTournamentRounds(simulateTournament(roundOneMatchups));
+      resetToSampleData();
       return;
     }
 
@@ -74,6 +78,9 @@ function App() {
         <h2>Upload Rankings CSV</h2>
         <input type="file" accept=".csv" onChange={handleFileChange} />
         {selectedFileName && <p>Selected file: {selectedFileName}</p>}
+        {selectedFileName && (
+          <button onClick={resetToSampleData}>Reset to Sample Data</button>
+        )}
       </section>
 
       <button onClick={generateBracket}>Generate Bracket</button>
