@@ -10,12 +10,12 @@ function App() {
   const [teams, setTeams] = useState<Team[]>([]);
   const [tournamentRounds, setTournamentRounds] = useState<TournamentRound[]>([]);
   const [showTeams, setShowTeams] = useState(false);
+  const [lockedChampionId, setLockedChampionId] = useState('');
 
   useEffect(() => {
     async function loadData() {
       const response = await fetch('/data/mm-data-2024.csv');
       const text = await response.text();
-
       const rows = parseCsv(text);
       const loadedTeams = rowsToTeams(rows);
       const matchups = generateRoundOneMatchups(loadedTeams);
@@ -30,7 +30,10 @@ function App() {
 
   function generateBracket() {
     const matchups = generateRoundOneMatchups(teams);
-    const tournament = simulateTournament(matchups);
+    const tournament = simulateTournament(
+      matchups,
+      lockedChampionId || undefined
+    );
     setTournamentRounds(tournament);
   }
 
@@ -48,6 +51,25 @@ function App() {
         <button onClick={() => setShowTeams(!showTeams)}>
           {showTeams ? 'Hide Teams' : 'Show Teams'}
         </button>
+
+        <div className="champion-picker">
+          <label htmlFor="champion-select">Locked champion:</label>
+          <select
+            id="champion-select"
+            value={lockedChampionId}
+            onChange={(event) => setLockedChampionId(event.target.value)}
+          >
+            <option value="">Random winner</option>
+            {teams
+              .slice()
+              .sort((a, b) => a.name.localeCompare(b.name))
+              .map((team) => (
+                <option key={team.id} value={team.id}>
+                  {team.name}
+                </option>
+              ))}
+          </select>
+        </div>
       </div>
 
       <BracketView tournamentRounds={tournamentRounds} teams={teams} />
@@ -55,7 +77,6 @@ function App() {
       {showTeams && (
         <>
           <h2>All Teams</h2>
-
           {teams.map((team) => (
             <TeamCard key={team.id} team={team} />
           ))}

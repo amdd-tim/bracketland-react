@@ -3,7 +3,6 @@ import type { Matchup, Team } from './types';
 function winProbability(teamA: Team, teamB: Team): number {
   const ratingDiff = teamA.rating - teamB.rating;
   const exponent = -((ratingDiff * 30.464) / 400);
-
   return 1 / (1 + Math.pow(10, exponent));
 }
 
@@ -60,12 +59,37 @@ export type TournamentRound = {
   winners: Team[];
 };
 
-export function simulateTournament(initialMatchups: Matchup[]): TournamentRound[] {
+function getForcedWinner(
+  matchup: Matchup,
+  lockedChampionId?: string
+): Team | null {
+  if (!lockedChampionId) {
+    return null;
+  }
+
+  if (matchup.teamA.id === lockedChampionId) {
+    return matchup.teamA;
+  }
+
+  if (matchup.teamB.id === lockedChampionId) {
+    return matchup.teamB;
+  }
+
+  return null;
+}
+
+export function simulateTournament(
+  initialMatchups: Matchup[],
+  lockedChampionId?: string
+): TournamentRound[] {
   const rounds: TournamentRound[] = [];
   let currentMatchups = initialMatchups;
 
   while (currentMatchups.length > 0) {
-    const winners = currentMatchups.map((matchup) => getMatchupWinner(matchup));
+    const winners = currentMatchups.map((matchup) => {
+      const forcedWinner = getForcedWinner(matchup, lockedChampionId);
+      return forcedWinner ?? getMatchupWinner(matchup);
+    });
 
     rounds.push({
       name: getRoundName(currentMatchups.length),
