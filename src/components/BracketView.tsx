@@ -149,7 +149,7 @@ function RegionSide({ regions, teams, tournamentRounds }: RegionSideProps) {
                         key={`${region}-r64-${index}`}
                         topTeam={game[0]}
                         bottomTeam={game[1]}
-                        winnerId={actualMatchup ? getWinnerId(actualMatchup, roundOf64, index) : undefined}
+                        winnerId={actualMatchup ? getWinnerId(actualMatchup, roundOf64) : undefined}
                       />
                     );
                   })}
@@ -280,14 +280,21 @@ function pairTeamsInOrder(teams: Team[]): Array<[Team | undefined, Team | undefi
 
 function getWinnerId(
   matchup: Matchup,
-  round: TournamentRound | undefined,
-  index: number
+  round: TournamentRound | undefined
 ): string | undefined {
   if (!round) {
     return undefined;
   }
 
-  return round.winners[index]?.id;
+  const matchupIndex = round.matchups.findIndex(
+    (roundMatchup) => roundMatchup.id === matchup.id
+  );
+
+  if (matchupIndex === -1) {
+    return undefined;
+  }
+
+  return round.winners[matchupIndex]?.id;
 }
 
 export default BracketView;
