@@ -2,8 +2,9 @@ import type { Matchup, Team } from './types';
 
 function winProbability(teamA: Team, teamB: Team): number {
   const ratingDiff = teamA.rating - teamB.rating;
+  const exponent = -((ratingDiff * 30.464) / 400);
 
-  return 1 / (1 + Math.pow(10, -ratingDiff / 400));
+  return 1 / (1 + Math.pow(10, exponent));
 }
 
 export function getMatchupWinner(matchup: Matchup): Team {
