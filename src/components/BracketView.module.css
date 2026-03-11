@@ -194,3 +194,19 @@
   vertical-align: super;
   line-height: 0;
 }
+
+.finalFourGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.championshipGrid {
+  display: grid;
+  justify-items: center;
+}
+
+.championshipGame {
+  width: min(100%, 240px);
+}

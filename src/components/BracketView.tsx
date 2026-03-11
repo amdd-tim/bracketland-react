@@ -39,12 +39,7 @@ function BracketView({ tournamentRounds, teams }: BracketViewProps) {
           <section className={styles.centerRound}>
             <h4 className={styles.roundHeading}>Final Four</h4>
 
-            <div
-              style={{
-                display: 'grid',
-                gap: '2rem',
-              }}
-            >
+            <div className={styles.finalFourGrid}>
               {(finalFour?.matchups ?? []).map((matchup, index) => (
                 <GameBox
                   key={matchup.id}
@@ -59,19 +54,15 @@ function BracketView({ tournamentRounds, teams }: BracketViewProps) {
           <section className={styles.centerRound}>
             <h4 className={styles.roundHeading}>Championship</h4>
 
-            <div
-              style={{
-                display: 'grid',
-                gap: '2rem',
-              }}
-            >
+            <div className={styles.championshipGrid}>
               {(championship?.matchups ?? []).map((matchup, index) => (
-                <GameBox
-                  key={matchup.id}
-                  topTeam={matchup.teamA}
-                  bottomTeam={matchup.teamB}
-                  winnerId={championship?.winners[index]?.id}
-                />
+                <div key={matchup.id} className={styles.championshipGame}>
+                  <GameBox
+                    topTeam={matchup.teamA}
+                    bottomTeam={matchup.teamB}
+                    winnerId={championship?.winners[index]?.id}
+                  />
+                </div>
               ))}
             </div>
           </section>
@@ -173,7 +164,9 @@ function RegionBracket({
                 key={`${region}-r64-${index}`}
                 topTeam={game[0]}
                 bottomTeam={game[1]}
-                winnerId={actualMatchup ? getWinnerId(actualMatchup, roundOf64) : undefined}
+                winnerId={
+                  actualMatchup ? getWinnerId(actualMatchup, roundOf64) : undefined
+                }
               />
             );
           })}
@@ -255,12 +248,12 @@ function RoundColumn({
         className={styles.roundGames}
         style={{
           gap,
+          marginTop: offset,
           ['--round-gap' as string]: gap,
         }}
       >
         {games.map((game, index) => {
           const isTopOfPair = index % 2 === 0;
-          const isBottomOfPair = index % 2 === 1;
           const wrapperClass = isTopOfPair
             ? styles.gameWrapperTop
             : styles.gameWrapperBottom;
@@ -279,9 +272,7 @@ function RoundColumn({
 
               {showConnectors && isTopOfPair && index < games.length - 1 && (
                 <div
-                  className={
-                    side === 'left' ? styles.spineLeft : styles.spineRight
-                  }
+                  className={side === 'left' ? styles.spineLeft : styles.spineRight}
                 />
               )}
             </div>
@@ -324,9 +315,7 @@ function TeamLine({ team, isWinner = false }: TeamLineProps) {
   const logoUrl = `https://secure.espn.com/combiner/i?img=/i/teamlogos/ncaa/500/${team.id}.png&w=40&h=40`;
 
   return (
-    <div
-      className={`${styles.teamLine} ${isWinner ? styles.teamLineWinner : ''}`}
-    >
+    <div className={`${styles.teamLine} ${isWinner ? styles.teamLineWinner : ''}`}>
       <img
         className={styles.teamLogo}
         src={logoUrl}
@@ -336,8 +325,8 @@ function TeamLine({ team, isWinner = false }: TeamLineProps) {
       />
 
       <span className={styles.teamName}>
-        <sup className={styles.seed}>{team.seed}</sup>
         {team.name}
+        <sup className={styles.seed}>{team.seed}</sup>
       </span>
     </div>
   );
