@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import type { Matchup, Team } from '../lib/types';
 import type { TournamentRound } from '../lib/simulation';
 import styles from './BracketView.module.css';
@@ -32,6 +33,7 @@ function BracketView({
             teams={teams}
             tournamentRounds={tournamentRounds}
             side="left"
+            onPickWinner={onPickWinner}
           />
         </div>
 
@@ -41,6 +43,7 @@ function BracketView({
             teams={teams}
             tournamentRounds={tournamentRounds}
             side="right"
+            onPickWinner={onPickWinner}
           />
         </div>
 
@@ -51,7 +54,7 @@ function BracketView({
               {(finalFour?.matchups ?? []).slice(0, 1).map((matchup) => (
                 <div key={matchup.id} className={styles.finalsGame}>
                   <GameBox
-                    roundName={finalFour.name}
+                    roundName={finalFour?.name ?? ''}
                     matchupId={matchup.id}
                     topTeam={matchup.teamA}
                     bottomTeam={matchup.teamB}
@@ -67,7 +70,7 @@ function BracketView({
               {(championship?.matchups ?? []).map((matchup) => (
                 <div key={matchup.id} className={styles.championshipGame}>
                   <GameBox
-                    roundName={championship.name}
+                    roundName={championship?.name ?? ''}
                     matchupId={matchup.id}
                     topTeam={matchup.teamA}
                     bottomTeam={matchup.teamB}
@@ -94,7 +97,7 @@ function BracketView({
               {(finalFour?.matchups ?? []).slice(1, 2).map((matchup) => (
                 <div key={matchup.id} className={styles.finalsGame}>
                   <GameBox
-                    roundName={finalFour.name}
+                    roundName={finalFour?.name ?? ''}
                     matchupId={matchup.id}
                     topTeam={matchup.teamA}
                     bottomTeam={matchup.teamB}
@@ -113,6 +116,7 @@ function BracketView({
             teams={teams}
             tournamentRounds={tournamentRounds}
             side="left"
+            onPickWinner={onPickWinner}
           />
         </div>
 
@@ -122,6 +126,7 @@ function BracketView({
             teams={teams}
             tournamentRounds={tournamentRounds}
             side="right"
+            onPickWinner={onPickWinner}
           />
         </div>
       </div>
@@ -150,7 +155,6 @@ function RegionBracket({
   const elite8 = tournamentRounds.find((round) => round.name === 'Elite 8');
 
   const regionTeams = teams.filter((team) => team.region === region);
-  const firstRoundGames = buildRegionFirstRound(regionTeams);
 
   const regionRound64Matchups = filterRoundMatchupsByRegion(roundOf64, region);
   const regionRound32Matchups = filterRoundMatchupsByRegion(roundOf32, region);
@@ -171,20 +175,16 @@ function RegionBracket({
           gap="0.75rem"
           side={side}
           showConnectors
-          games={firstRoundGames.map((game, index) => {
-            const actualMatchup = regionRound64Matchups[index];
-
-            return (
-              <GameBox
-                roundName={roundOf64?.name ?? ''}
-                matchupId={actualMatchup.id}
-                topTeam={actualMatchup.teamA}
-                bottomTeam={actualMatchup.teamB}
-                winnerId={getWinnerId(actualMatchup)}
-                onPickWinner={onPickWinner}
-              />
-            );
-          })}
+          games={regionRound64Matchups.map((matchup) => (
+            <GameBox
+              roundName={roundOf64?.name ?? ''}
+              matchupId={matchup.id}
+              topTeam={matchup.teamA}
+              bottomTeam={matchup.teamB}
+              winnerId={getWinnerId(matchup)}
+              onPickWinner={onPickWinner}
+            />
+          ))}
         />
 
         <RoundColumn
@@ -246,7 +246,7 @@ function RegionBracket({
 
 type RoundColumnProps = {
   title: string;
-  games: React.ReactNode[];
+  games: ReactNode[];
   gap: string;
   offset?: string;
   side: 'left' | 'right';
@@ -411,7 +411,7 @@ function filterRoundMatchupsByRegion(
 
   return round.matchups.filter(
     (matchup) =>
-      matchup.teamA.region === region && matchup.teamB.region === region
+      matchup.teamA?.region === region && matchup.teamB?.region === region
   );
 }
 
