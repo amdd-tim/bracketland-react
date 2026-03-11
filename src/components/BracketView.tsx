@@ -1,5 +1,6 @@
 import type { Matchup, Team } from '../lib/types';
 import type { TournamentRound } from '../lib/simulation';
+import styles from './BracketView.module.css';
 
 type BracketViewProps = {
   tournamentRounds: TournamentRound[];
@@ -10,71 +11,73 @@ function BracketView({ tournamentRounds, teams }: BracketViewProps) {
   const leftRegions = ['East', 'West'];
   const rightRegions = ['South', 'Midwest'];
 
+  const finalFour = tournamentRounds.find((round) => round.name === 'Final Four');
+  const championship = tournamentRounds.find(
+    (round) => round.name === 'Championship'
+  );
+
   const champion =
     tournamentRounds.length > 0
       ? tournamentRounds[tournamentRounds.length - 1].winners[0]
       : null;
 
   return (
-    <section>
-      <h2>Tournament Bracket</h2>
+    <section className={styles.wrapper}>
+      <h2 className={styles.title}>Tournament Bracket</h2>
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 320px 1fr',
-          gap: '1.5rem',
-          alignItems: 'start',
-          overflowX: 'auto',
-        }}
-      >
+      <div className={styles.layout}>
         <RegionSide
           regions={leftRegions}
           teams={teams}
           tournamentRounds={tournamentRounds}
+          side="left"
         />
 
-        <section
-          style={{
-            background: 'white',
-            border: '1px solid #ddd',
-            borderRadius: '1rem',
-            padding: '1rem',
-            alignSelf: 'stretch',
-          }}
-        >
-          <h3 style={{ marginBottom: '1rem' }}>Final Rounds</h3>
+        <section className={styles.centerPanel}>
+          <h3 className={styles.sectionTitle}>Final Rounds</h3>
 
-          {tournamentRounds.slice(-3).map((round) => (
-            <section key={round.name} style={{ marginBottom: '1.5rem' }}>
-              <h4 style={{ marginBottom: '0.75rem' }}>{round.name}</h4>
+          <section className={styles.centerRound}>
+            <h4 className={styles.roundHeading}>Final Four</h4>
 
-              <div
-                style={{
-                  display: 'grid',
-                  gap: getRoundGap(round.matchups.length),
-                }}
-              >
-                {round.matchups.map((matchup, index) => (
-                  <GameBox
-                    key={matchup.id}
-                    topTeam={matchup.teamA}
-                    bottomTeam={matchup.teamB}
-                    winnerId={round.winners[index]?.id}
-                  />
-                ))}
-              </div>
-            </section>
-          ))}
-
-          {champion && (
             <div
               style={{
-                marginTop: '1.5rem',
-                paddingTop: '1rem',
-                borderTop: '1px solid #eee',
+                display: 'grid',
+                gap: '2rem',
               }}
             >
+              {(finalFour?.matchups ?? []).map((matchup, index) => (
+                <GameBox
+                  key={matchup.id}
+                  topTeam={matchup.teamA}
+                  bottomTeam={matchup.teamB}
+                  winnerId={finalFour?.winners[index]?.id}
+                />
+              ))}
+            </div>
+          </section>
+
+          <section className={styles.centerRound}>
+            <h4 className={styles.roundHeading}>Championship</h4>
+
+            <div
+              style={{
+                display: 'grid',
+                gap: '2rem',
+              }}
+            >
+              {(championship?.matchups ?? []).map((matchup, index) => (
+                <GameBox
+                  key={matchup.id}
+                  topTeam={matchup.teamA}
+                  bottomTeam={matchup.teamB}
+                  winnerId={championship?.winners[index]?.id}
+                />
+              ))}
+            </div>
+          </section>
+
+          {champion && (
+            <div className={styles.championBlock}>
               <h4>Champion</h4>
               <p>
                 <strong>{champion.name}</strong>
@@ -87,6 +90,7 @@ function BracketView({ tournamentRounds, teams }: BracketViewProps) {
           regions={rightRegions}
           teams={teams}
           tournamentRounds={tournamentRounds}
+          side="right"
         />
       </div>
     </section>
@@ -97,22 +101,24 @@ type RegionSideProps = {
   regions: string[];
   teams: Team[];
   tournamentRounds: TournamentRound[];
+  side: 'left' | 'right';
 };
 
-function RegionSide({ regions, teams, tournamentRounds }: RegionSideProps) {
+function RegionSide({
+  regions,
+  teams,
+  tournamentRounds,
+  side,
+}: RegionSideProps) {
   return (
-    <div
-      style={{
-        display: 'grid',
-        gap: '1.5rem',
-      }}
-    >
+    <div className={styles.regionSide}>
       {regions.map((region) => (
         <RegionBracket
           key={region}
           region={region}
           teams={teams}
           tournamentRounds={tournamentRounds}
+          side={side}
         />
       ))}
     </div>
@@ -123,9 +129,15 @@ type RegionBracketProps = {
   region: string;
   teams: Team[];
   tournamentRounds: TournamentRound[];
+  side: 'left' | 'right';
 };
 
-function RegionBracket({ region, teams, tournamentRounds }: RegionBracketProps) {
+function RegionBracket({
+  region,
+  teams,
+  tournamentRounds,
+  side,
+}: RegionBracketProps) {
   const roundOf64 = tournamentRounds.find((round) => round.name === 'Round of 64');
   const roundOf32 = tournamentRounds.find((round) => round.name === 'Round of 32');
   const sweet16 = tournamentRounds.find((round) => round.name === 'Sweet 16');
@@ -140,28 +152,15 @@ function RegionBracket({ region, teams, tournamentRounds }: RegionBracketProps) 
   const regionElite8Matchups = filterRoundMatchupsByRegion(elite8, region);
 
   return (
-    <section
-      style={{
-        background: 'white',
-        border: '1px solid #ddd',
-        borderRadius: '1rem',
-        padding: '1rem',
-      }}
-    >
-      <h3 style={{ marginBottom: '1rem' }}>{region}</h3>
+    <section className={styles.regionBracket}>
+      <h3 className={styles.regionTitle}>{region}</h3>
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(4, minmax(160px, 1fr))',
-          gap: '1rem',
-          alignItems: 'start',
-          overflowX: 'auto',
-        }}
-      >
+      <div className={styles.regionRounds}>
         <RoundColumn
           title="Round of 64"
           gap="0.75rem"
+          side={side}
+          showConnectors
           games={firstRoundGames.map((game, index) => {
             const actualMatchup = regionRound64Matchups[index];
 
@@ -180,6 +179,8 @@ function RegionBracket({ region, teams, tournamentRounds }: RegionBracketProps) 
           title="Round of 32"
           gap="1.5rem"
           offset="2rem"
+          side={side}
+          showConnectors
           games={regionRound32Matchups.map((matchup) => (
             <GameBox
               key={matchup.id}
@@ -194,6 +195,8 @@ function RegionBracket({ region, teams, tournamentRounds }: RegionBracketProps) 
           title="Sweet 16"
           gap="3rem"
           offset="4rem"
+          side={side}
+          showConnectors
           games={regionSweet16Matchups.map((matchup) => (
             <GameBox
               key={matchup.id}
@@ -208,6 +211,7 @@ function RegionBracket({ region, teams, tournamentRounds }: RegionBracketProps) 
           title="Elite 8"
           gap="6rem"
           offset="7rem"
+          side={side}
           games={regionElite8Matchups.map((matchup) => (
             <GameBox
               key={matchup.id}
@@ -227,21 +231,34 @@ type RoundColumnProps = {
   games: React.ReactNode[];
   gap: string;
   offset?: string;
+  side: 'left' | 'right';
+  showConnectors?: boolean;
 };
 
-function RoundColumn({ title, games, gap, offset = '0' }: RoundColumnProps) {
+function RoundColumn({
+  title,
+  games,
+  side,
+  showConnectors = false,
+}: RoundColumnProps) {
   return (
-    <div>
-      <h4 style={{ marginBottom: '0.75rem' }}>{title}</h4>
+    <div className={styles.roundColumn}>
+      <h4 className={styles.roundColumnTitle}>{title}</h4>
 
-      <div
-        style={{
-          display: 'grid',
-          gap,
-          marginTop: offset,
-        }}
-      >
-        {games}
+      <div className={styles.roundGames}>
+        {games.map((game, index) => (
+          <div key={index} className={styles.gameWrapper}>
+            {game}
+
+            {showConnectors && (
+              <div
+                className={
+                  side === 'left' ? styles.connectorLeft : styles.connectorRight
+                }
+              />
+            )}
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -255,14 +272,7 @@ type GameBoxProps = {
 
 function GameBox({ topTeam, bottomTeam, winnerId }: GameBoxProps) {
   return (
-    <div
-      style={{
-        background: '#fff',
-        border: '1px solid #ddd',
-        borderRadius: '0.75rem',
-        overflow: 'hidden',
-      }}
-    >
+    <div className={styles.gameBox}>
       <TeamLine team={topTeam} isWinner={winnerId === topTeam?.id} />
       <TeamLine team={bottomTeam} isWinner={winnerId === bottomTeam?.id} />
     </div>
@@ -277,14 +287,7 @@ type TeamLineProps = {
 function TeamLine({ team, isWinner = false }: TeamLineProps) {
   if (!team) {
     return (
-      <div
-        style={{
-          display: 'flex',
-          gap: '0.5rem',
-          padding: '0.65rem 0.75rem',
-          borderBottom: '1px solid #eee',
-        }}
-      >
+      <div className={styles.teamLineEmpty}>
         <span>—</span>
       </div>
     );
@@ -292,16 +295,9 @@ function TeamLine({ team, isWinner = false }: TeamLineProps) {
 
   return (
     <div
-      style={{
-        display: 'flex',
-        gap: '0.5rem',
-        padding: '0.65rem 0.75rem',
-        borderBottom: '1px solid #eee',
-        fontWeight: isWinner ? 700 : 400,
-        background: isWinner ? '#f5f5f5' : 'white',
-      }}
+      className={`${styles.teamLine} ${isWinner ? styles.teamLineWinner : ''}`}
     >
-      <span style={{ minWidth: '1.5rem' }}>{team.seed}</span>
+      <span className={styles.seed}>{team.seed}</span>
       <span>{team.name}</span>
     </div>
   );
@@ -364,19 +360,6 @@ function getWinnerId(
   }
 
   return round.winners[matchupIndex]?.id;
-}
-
-function getRoundGap(matchupCount: number): string {
-  switch (matchupCount) {
-    case 4:
-      return '3rem';
-    case 2:
-      return '5rem';
-    case 1:
-      return '7rem';
-    default:
-      return '1rem';
-  }
 }
 
 export default BracketView;
