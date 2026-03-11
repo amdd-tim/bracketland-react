@@ -3,6 +3,7 @@ import type { Team } from './lib/types';
 import type { TournamentRound } from './lib/simulation';
 import { parseCsv, rowsToTeams } from './lib/csv';
 import { generateRoundOneMatchups, simulateTournament } from './lib/simulation';
+import { updateBracketWinner } from './lib/bracket';
 import BracketView from './components/BracketView';
 import TeamCard from './components/TeamCard';
 
@@ -37,6 +38,16 @@ function App() {
     window.print();
   }
 
+  function handlePickWinner(
+    roundName: string,
+    matchupId: string,
+    teamId: string
+  ) {
+    setTournamentRounds((currentRounds) =>
+      updateBracketWinner(currentRounds, roundName, matchupId, teamId)
+    );
+  }
+
   return (
     <main>
       <h1>Bracketland</h1>
@@ -49,7 +60,11 @@ function App() {
         </button>
       </div>
 
-      <BracketView tournamentRounds={tournamentRounds} teams={teams} />
+      <BracketView
+        tournamentRounds={tournamentRounds}
+        teams={teams}
+        onPickWinner={handlePickWinner}
+      />
 
       {showTeams && (
         <>

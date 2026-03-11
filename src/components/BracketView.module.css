@@ -250,5 +250,28 @@
 }
 
 .finalsColumn {
-  
+
+}
+
+.teamLine {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  border: 0;
+  border-bottom: 1px solid #eee;
+  background: white;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.teamLine:hover {
+  background: #f8f8f8;
+}
+
+.teamLineWinner {
+  font-weight: 700;
+  background: #f3f3f3;
 }

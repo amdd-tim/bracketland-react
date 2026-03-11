@@ -5,9 +5,14 @@ import styles from './BracketView.module.css';
 type BracketViewProps = {
   tournamentRounds: TournamentRound[];
   teams: Team[];
+  onPickWinner: (roundName: string, matchupId: string, teamId: string) => void;
 };
 
-function BracketView({ tournamentRounds, teams }: BracketViewProps) {
+function BracketView({
+  tournamentRounds,
+  teams,
+  onPickWinner,
+}: BracketViewProps) {
   const finalFour = tournamentRounds.find((round) => round.name === 'Final Four');
   const championship = tournamentRounds.find(
     (round) => round.name === 'Championship'
@@ -46,9 +51,12 @@ function BracketView({ tournamentRounds, teams }: BracketViewProps) {
               {(finalFour?.matchups ?? []).slice(0, 1).map((matchup) => (
                 <div key={matchup.id} className={styles.finalsGame}>
                   <GameBox
+                    roundName={finalFour.name}
+                    matchupId={matchup.id}
                     topTeam={matchup.teamA}
                     bottomTeam={matchup.teamB}
                     winnerId={getWinnerId(matchup)}
+                    onPickWinner={onPickWinner}
                   />
                 </div>
               ))}
@@ -59,9 +67,12 @@ function BracketView({ tournamentRounds, teams }: BracketViewProps) {
               {(championship?.matchups ?? []).map((matchup) => (
                 <div key={matchup.id} className={styles.championshipGame}>
                   <GameBox
+                    roundName={championship.name}
+                    matchupId={matchup.id}
                     topTeam={matchup.teamA}
                     bottomTeam={matchup.teamB}
                     winnerId={getWinnerId(matchup)}
+                    onPickWinner={onPickWinner}
                   />
                 </div>
               ))}
@@ -83,9 +94,12 @@ function BracketView({ tournamentRounds, teams }: BracketViewProps) {
               {(finalFour?.matchups ?? []).slice(1, 2).map((matchup) => (
                 <div key={matchup.id} className={styles.finalsGame}>
                   <GameBox
+                    roundName={finalFour.name}
+                    matchupId={matchup.id}
                     topTeam={matchup.teamA}
                     bottomTeam={matchup.teamB}
                     winnerId={getWinnerId(matchup)}
+                    onPickWinner={onPickWinner}
                   />
                 </div>
               ))}
@@ -283,16 +297,42 @@ function RoundColumn({
 }
 
 type GameBoxProps = {
+  roundName: string;
+  matchupId: string;
   topTeam?: Team;
   bottomTeam?: Team;
   winnerId?: string;
+  onPickWinner: (roundName: string, matchupId: string, teamId: string) => void;
 };
 
-function GameBox({ topTeam, bottomTeam, winnerId }: GameBoxProps) {
+function GameBox({
+  roundName,
+  matchupId,
+  topTeam,
+  bottomTeam,
+  winnerId,
+  onPickWinner,
+}: GameBoxProps) {
   return (
     <div className={styles.gameBox}>
-      <TeamLine team={topTeam} isWinner={winnerId === topTeam?.id} />
-      <TeamLine team={bottomTeam} isWinner={winnerId === bottomTeam?.id} />
+      <TeamLine
+        team={topTeam}
+        isWinner={winnerId === topTeam?.id}
+        onClick={
+          topTeam
+            ? () => onPickWinner(roundName, matchupId, topTeam.id)
+            : undefined
+        }
+      />
+      <TeamLine
+        team={bottomTeam}
+        isWinner={winnerId === bottomTeam?.id}
+        onClick={
+          bottomTeam
+            ? () => onPickWinner(roundName, matchupId, bottomTeam.id)
+            : undefined
+        }
+      />
     </div>
   );
 }
@@ -300,9 +340,10 @@ function GameBox({ topTeam, bottomTeam, winnerId }: GameBoxProps) {
 type TeamLineProps = {
   team?: Team;
   isWinner?: boolean;
+  onClick?: () => void;
 };
 
-function TeamLine({ team, isWinner = false }: TeamLineProps) {
+function TeamLine({ team, isWinner = false, onClick }: TeamLineProps) {
   if (!team) {
     return (
       <div className={styles.teamLineEmpty}>
@@ -314,20 +355,17 @@ function TeamLine({ team, isWinner = false }: TeamLineProps) {
   const logoUrl = `https://secure.espn.com/combiner/i?img=/i/teamlogos/ncaa/500/${team.id}.png&w=40&h=40`;
 
   return (
-    <div className={`${styles.teamLine} ${isWinner ? styles.teamLineWinner : ''}`}>
-      <img
-        className={styles.teamLogo}
-        src={logoUrl}
-        alt={team.name}
-        width="20"
-        height="20"
-      />
-
+    <button
+      type="button"
+      className={`${styles.teamLine} ${isWinner ? styles.teamLineWinner : ''}`}
+      onClick={onClick}
+    >
+      <img src={logoUrl} alt="" className={styles.teamLogo} />
       <span className={styles.teamName}>
+        <span>{team.name}</span>
         <sup className={styles.seed}>{team.seed}</sup>
-        {team.name}
       </span>
-    </div>
+    </button>
   );
 }
 
