@@ -238,6 +238,8 @@ type RoundColumnProps = {
 function RoundColumn({
   title,
   games,
+  gap,
+  offset = '0',
   side,
   showConnectors = false,
 }: RoundColumnProps) {
@@ -245,20 +247,43 @@ function RoundColumn({
     <div className={styles.roundColumn}>
       <h4 className={styles.roundColumnTitle}>{title}</h4>
 
-      <div className={styles.roundGames}>
-        {games.map((game, index) => (
-          <div key={index} className={styles.gameWrapper}>
-            {game}
+      <div
+        className={styles.roundGames}
+        style={{
+          gap,
+          marginTop: offset,
+          ['--round-gap' as string]: gap,
+        }}
+      >
+        {games.map((game, index) => {
+          const isTopOfPair = index % 2 === 0;
+          const isBottomOfPair = index % 2 === 1;
+          const wrapperClass = isTopOfPair
+            ? styles.gameWrapperTop
+            : styles.gameWrapperBottom;
 
-            {showConnectors && (
-              <div
-                className={
-                  side === 'left' ? styles.connectorLeft : styles.connectorRight
-                }
-              />
-            )}
-          </div>
-        ))}
+          return (
+            <div key={index} className={wrapperClass}>
+              {game}
+
+              {showConnectors && (
+                <div
+                  className={
+                    side === 'left' ? styles.connectorLeft : styles.connectorRight
+                  }
+                />
+              )}
+
+              {showConnectors && isTopOfPair && index < games.length - 1 && (
+                <div
+                  className={
+                    side === 'left' ? styles.spineLeft : styles.spineRight
+                  }
+                />
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

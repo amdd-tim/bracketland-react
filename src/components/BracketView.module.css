@@ -135,6 +135,31 @@
   min-width: 1.5rem;
 }
 
+.spineLeft,
+.spineRight {
+  position: absolute;
+  width: 1rem;
+  border-right: 2px solid #ccc;
+  top: 50%;
+  height: calc(100% + var(--round-gap, 0px));
+  pointer-events: none;
+}
+
+.spineLeft {
+  right: -1rem;
+}
+
+.spineRight {
+  left: -1rem;
+  border-right: none;
+  border-left: 2px solid #ccc;
+}
+
+.gameWrapperTop,
+.gameWrapperBottom {
+  position: relative;
+}
+
 .championBlock {
   margin-top: 1.5rem;
   padding-top: 1rem;
