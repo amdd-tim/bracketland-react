@@ -18,7 +18,6 @@ function App() {
 
       const rows = parseCsv(text);
       const loadedTeams = rowsToTeams(rows);
-
       const matchups = generateRoundOneMatchups(loadedTeams);
       const tournament = simulateTournament(matchups);
 
@@ -35,17 +34,23 @@ function App() {
     setTournamentRounds(tournament);
   }
 
+  function printBracket() {
+    window.print();
+  }
+
   return (
     <main>
       <h1>Bracketland</h1>
 
-      <button onClick={generateBracket}>Generate Bracket</button>
+      <div className="app-controls">
+        <button onClick={generateBracket}>Generate Bracket</button>
+        <button onClick={printBracket}>Print Bracket</button>
+        <button onClick={() => setShowTeams(!showTeams)}>
+          {showTeams ? 'Hide Teams' : 'Show Teams'}
+        </button>
+      </div>
 
       <BracketView tournamentRounds={tournamentRounds} teams={teams} />
-
-      <button onClick={() => setShowTeams(!showTeams)}>
-        {showTeams ? 'Hide Teams' : 'Show Teams'}
-      </button>
 
       {showTeams && (
         <>

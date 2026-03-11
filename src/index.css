@@ -58,3 +58,37 @@ pre {
   border: 1px solid #ddd;
   border-radius: 0.5rem;
 }
+
+.app-controls {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+@media print {
+  body {
+    background: white;
+  }
+
+  .app-controls {
+    display: none;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  p {
+    color: black;
+  }
+
+  main {
+    max-width: none;
+    padding: 0.5in;
+  }
+
+  button {
+    display: none;
+  }
+}
