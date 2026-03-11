@@ -134,6 +134,7 @@ type RegionBracketProps = {
   teams: Team[];
   tournamentRounds: TournamentRound[];
   side: 'left' | 'right';
+  onPickWinner: (roundName: string, matchupId: string, teamId: string) => void;
 };
 
 function RegionBracket({
@@ -141,6 +142,7 @@ function RegionBracket({
   teams,
   tournamentRounds,
   side,
+  onPickWinner,
 }: RegionBracketProps) {
   const roundOf64 = tournamentRounds.find((round) => round.name === 'Round of 64');
   const roundOf32 = tournamentRounds.find((round) => round.name === 'Round of 32');
@@ -174,12 +176,12 @@ function RegionBracket({
 
             return (
               <GameBox
-                key={`${region}-r64-${index}`}
-                topTeam={game[0]}
-                bottomTeam={game[1]}
-                winnerId={
-                  actualMatchup ? getWinnerId(actualMatchup) : undefined
-                }
+                roundName={roundOf64?.name ?? ''}
+                matchupId={actualMatchup.id}
+                topTeam={actualMatchup.teamA}
+                bottomTeam={actualMatchup.teamB}
+                winnerId={getWinnerId(actualMatchup)}
+                onPickWinner={onPickWinner}
               />
             );
           })}
@@ -193,10 +195,12 @@ function RegionBracket({
           showConnectors
           games={regionRound32Matchups.map((matchup) => (
             <GameBox
-              key={matchup.id}
+              roundName={roundOf32?.name ?? ''}
+              matchupId={matchup.id}
               topTeam={matchup.teamA}
               bottomTeam={matchup.teamB}
               winnerId={getWinnerId(matchup)}
+              onPickWinner={onPickWinner}
             />
           ))}
         />
@@ -209,10 +213,12 @@ function RegionBracket({
           showConnectors
           games={regionSweet16Matchups.map((matchup) => (
             <GameBox
-              key={matchup.id}
+              roundName={sweet16?.name ?? ''}
+              matchupId={matchup.id}
               topTeam={matchup.teamA}
               bottomTeam={matchup.teamB}
               winnerId={getWinnerId(matchup)}
+              onPickWinner={onPickWinner}
             />
           ))}
         />
@@ -224,10 +230,12 @@ function RegionBracket({
           side={side}
           games={regionElite8Matchups.map((matchup) => (
             <GameBox
-              key={matchup.id}
+              roundName={elite8?.name ?? ''}
+              matchupId={matchup.id}
               topTeam={matchup.teamA}
               bottomTeam={matchup.teamB}
               winnerId={getWinnerId(matchup)}
+              onPickWinner={onPickWinner}
             />
           ))}
         />
@@ -319,9 +327,7 @@ function GameBox({
         team={topTeam}
         isWinner={winnerId === topTeam?.id}
         onClick={
-          topTeam
-            ? () => onPickWinner(roundName, matchupId, topTeam.id)
-            : undefined
+          topTeam ? () => onPickWinner(roundName, matchupId, topTeam.id) : undefined
         }
       />
       <TeamLine
