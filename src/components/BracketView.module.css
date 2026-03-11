@@ -131,10 +131,6 @@
   border-bottom: 1px solid #eee;
 }
 
-.seed {
-  min-width: 1.5rem;
-}
-
 .spineLeft,
 .spineRight {
   position: absolute;
@@ -177,4 +173,24 @@
 .regionRoundsLeft > *,
 .regionRoundsRight > * {
   direction: ltr;
+}
+
+.teamLogo {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.teamName {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  min-width: 0;
+}
+
+.seed {
+  font-size: 0.65rem;
+  vertical-align: super;
+  line-height: 0;
 }

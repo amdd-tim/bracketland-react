@@ -322,12 +322,24 @@ function TeamLine({ team, isWinner = false }: TeamLineProps) {
     );
   }
 
+  const logoUrl = `https://secure.espn.com/combiner/i?img=/i/teamlogos/ncaa/500/${team.id}.png&w=40&h=40`;
+
   return (
     <div
       className={`${styles.teamLine} ${isWinner ? styles.teamLineWinner : ''}`}
     >
-      <span className={styles.seed}>{team.seed}</span>
-      <span>{team.name}</span>
+      <img
+        className={styles.teamLogo}
+        src={logoUrl}
+        alt={team.name}
+        width="20"
+        height="20"
+      />
+
+      <span className={styles.teamName}>
+        <sup className={styles.seed}>{team.seed}</sup>
+        {team.name}
+      </span>
     </div>
   );
 }
