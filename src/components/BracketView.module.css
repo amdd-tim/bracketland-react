@@ -230,7 +230,7 @@
   min-width: 0;
 }
 
-.finalsRow {
+.centerPanel {
   grid-column: 1 / -1;
   background: white;
   border: 1px solid #ddd;
@@ -243,33 +243,12 @@
   text-align: center;
 }
 
-.finalsInner {
+.finalsRow {
   display: grid;
-  grid-template-columns: repeat(2, minmax(220px, 1fr));
-  gap: 1rem;
-  margin-bottom: 1.25rem;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
 }
 
-.finalFourGame,
-.championshipGame {
-  max-width: 260px;
-  width: 100%;
-}
-
-.championshipWrap {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 1.25rem;
-}
-
-.roundHeading {
-  margin-bottom: 0.75rem;
-  text-align: center;
-}
-
-.championBlock {
-  max-width: 260px;
-  margin: 0 auto;
-  padding-top: 1rem;
-  border-top: 1px solid #eee;
+.finalsColumn {
+  
 }

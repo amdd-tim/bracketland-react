@@ -40,48 +40,58 @@ function BracketView({ tournamentRounds, teams }: BracketViewProps) {
           />
         </div>
 
-        <div className={styles.finalsRow}>
-          <h3 className={styles.sectionTitle}>Final Four</h3>
-
-          <div className={styles.finalsInner}>
-            {(finalFour?.matchups ?? []).map((matchup) => (
-              <div key={matchup.id} className={styles.finalFourGame}>
-                <GameBox
-                  topTeam={matchup.teamA}
-                  bottomTeam={matchup.teamB}
-                  winnerId={getWinnerId(matchup, finalFour)}
-                />
-              </div>
-            ))}
-          </div>
-
-          {(championship?.matchups ?? []).length ? (
-            <>
-              <h4 className={styles.roundHeading}>Championship</h4>
-              <div className={styles.championshipWrap}>
-                {championship?.matchups.map((matchup) => (
-                  <div key={matchup.id} className={styles.championshipGame}>
-                    <GameBox
-                      topTeam={matchup.teamA}
-                      bottomTeam={matchup.teamB}
-                      winnerId={getWinnerId(matchup, championship)}
-                    />
-                  </div>
-                ))}
-              </div>
-            </>
-          ) : null}
-
-          {champion && (
-            <div className={styles.championBlock}>
-              <h4 className={styles.roundHeading}>Champion</h4>
-              <div className={styles.gameBox}>
-                <div className={`${styles.teamLine} ${styles.teamLineWinner}`}>
-                  <span>{champion.name}</span>
+        <div className={styles.centerPanel}>
+          <div className={styles.finalsRow}>
+            <div className={styles.finalsColumn}>
+              <h4 className={styles.roundHeading}>Final Four</h4>
+              {(finalFour?.matchups ?? []).slice(0, 1).map((matchup) => (
+                <div key={matchup.id} className={styles.finalsGame}>
+                  <GameBox
+                    topTeam={matchup.teamA}
+                    bottomTeam={matchup.teamB}
+                    winnerId={getWinnerId(matchup, finalFour)}
+                  />
                 </div>
-              </div>
+              ))}
             </div>
-          )}
+
+            <div className={styles.finalsColumn}>
+              <h4 className={styles.roundHeading}>Championship</h4>
+              {(championship?.matchups ?? []).map((matchup) => (
+                <div key={matchup.id} className={styles.championshipGame}>
+                  <GameBox
+                    topTeam={matchup.teamA}
+                    bottomTeam={matchup.teamB}
+                    winnerId={getWinnerId(matchup, championship)}
+                  />
+                </div>
+              ))}
+
+              {champion && (
+                <div className={styles.championBlock}>
+                  <h4 className={styles.roundHeading}>Champion</h4>
+                  <div className={styles.gameBox}>
+                    <div className={`${styles.teamLine} ${styles.teamLineWinner}`}>
+                      <span>{champion.name}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className={styles.finalsColumn}>
+              <h4 className={styles.roundHeading}>Final Four</h4>
+              {(finalFour?.matchups ?? []).slice(1, 2).map((matchup) => (
+                <div key={matchup.id} className={styles.finalsGame}>
+                  <GameBox
+                    topTeam={matchup.teamA}
+                    bottomTeam={matchup.teamB}
+                    winnerId={getWinnerId(matchup, finalFour)}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
         <div className={styles.regionCell}>
