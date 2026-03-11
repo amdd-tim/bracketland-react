@@ -255,7 +255,6 @@ function RoundColumn({
         className={styles.roundGames}
         style={{
           gap,
-          marginTop: offset,
           ['--round-gap' as string]: gap,
         }}
       >
