@@ -155,7 +155,11 @@ function RegionBracket({
     <section className={styles.regionBracket}>
       <h3 className={styles.regionTitle}>{region}</h3>
 
-      <div className={styles.regionRounds}>
+      <div
+        className={`${styles.regionRounds} ${
+          side === 'left' ? styles.regionRoundsLeft : styles.regionRoundsRight
+        }`}
+      >
         <RoundColumn
           title="Round of 64"
           gap="0.75rem"
