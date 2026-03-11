@@ -8,8 +8,9 @@ export type Team = {
 
 export type Matchup = {
   id: string;
-  teamA: Team;
-  teamB: Team;
+  teamA?: Team;
+  teamB?: Team;
+  winner?: Team;
 };
 
 export type Bracket = {

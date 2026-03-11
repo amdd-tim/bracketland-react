@@ -3,11 +3,17 @@ import type { Matchup, Team } from './types';
 function winProbability(teamA: Team, teamB: Team): number {
   const ratingDiff = teamA.rating - teamB.rating;
   const exponent = -((ratingDiff * 30.464) / 400);
+
   return 1 / (1 + Math.pow(10, exponent));
 }
 
 export function getMatchupWinner(matchup: Matchup): Team {
   const { teamA, teamB } = matchup;
+
+  if (!teamA || !teamB) {
+    throw new Error(`Matchup ${matchup.id} is missing a team.`);
+  }
+
   const probabilityA = winProbability(teamA, teamB);
 
   if (Math.random() < probabilityA) {
@@ -17,95 +23,10 @@ export function getMatchupWinner(matchup: Matchup): Team {
   return teamB;
 }
 
-export function generateNextRoundMatchups(winners: Team[]): Matchup[] {
-  const matchups: Matchup[] = [];
-
-  for (let i = 0; i < winners.length; i += 2) {
-    const teamA = winners[i];
-    const teamB = winners[i + 1];
-
-    if (!teamA || !teamB) {
-      continue;
-    }
-
-    matchups.push({
-      id: `next-${i / 2 + 1}`,
-      teamA,
-      teamB,
-    });
-  }
-
-  return matchups;
-}
-
-export type SimulatedRound = {
-  winners: Team[];
-  nextMatchups: Matchup[];
-};
-
-export function simulateRound(matchups: Matchup[]): SimulatedRound {
-  const winners = matchups.map((matchup) => getMatchupWinner(matchup));
-  const nextMatchups = generateNextRoundMatchups(winners);
-
-  return {
-    winners,
-    nextMatchups,
-  };
-}
-
 export type TournamentRound = {
   name: string;
   matchups: Matchup[];
-  winners: Team[];
 };
-
-function getForcedWinner(
-  matchup: Matchup,
-  lockedChampionId?: string
-): Team | null {
-  if (!lockedChampionId) {
-    return null;
-  }
-
-  if (matchup.teamA.id === lockedChampionId) {
-    return matchup.teamA;
-  }
-
-  if (matchup.teamB.id === lockedChampionId) {
-    return matchup.teamB;
-  }
-
-  return null;
-}
-
-export function simulateTournament(
-  initialMatchups: Matchup[],
-  lockedChampionId?: string
-): TournamentRound[] {
-  const rounds: TournamentRound[] = [];
-  let currentMatchups = initialMatchups;
-
-  while (currentMatchups.length > 0) {
-    const winners = currentMatchups.map((matchup) => {
-      const forcedWinner = getForcedWinner(matchup, lockedChampionId);
-      return forcedWinner ?? getMatchupWinner(matchup);
-    });
-
-    rounds.push({
-      name: getRoundName(currentMatchups.length),
-      matchups: currentMatchups,
-      winners,
-    });
-
-    if (winners.length === 1) {
-      break;
-    }
-
-    currentMatchups = generateNextRoundMatchups(winners);
-  }
-
-  return rounds;
-}
 
 function getRoundName(matchupCount: number): string {
   switch (matchupCount) {
@@ -126,6 +47,76 @@ function getRoundName(matchupCount: number): string {
   }
 }
 
+function getRoundKey(matchupCount: number): string {
+  switch (matchupCount) {
+    case 32:
+      return 'round-of-64';
+    case 16:
+      return 'round-of-32';
+    case 8:
+      return 'sweet-16';
+    case 4:
+      return 'elite-8';
+    case 2:
+      return 'final-four';
+    case 1:
+      return 'championship';
+    default:
+      return `round-${matchupCount}`;
+  }
+}
+
+export function generateNextRoundMatchups(
+  completedMatchups: Matchup[],
+  nextRoundKey: string
+): Matchup[] {
+  const matchups: Matchup[] = [];
+
+  for (let i = 0; i < completedMatchups.length; i += 2) {
+    const topMatchup = completedMatchups[i];
+    const bottomMatchup = completedMatchups[i + 1];
+
+    if (!topMatchup?.winner || !bottomMatchup?.winner) {
+      continue;
+    }
+
+    matchups.push({
+      id: `${nextRoundKey}-matchup-${i / 2 + 1}`,
+      teamA: topMatchup.winner,
+      teamB: bottomMatchup.winner,
+    });
+  }
+
+  return matchups;
+}
+
+export function simulateTournament(initialMatchups: Matchup[]): TournamentRound[] {
+  const rounds: TournamentRound[] = [];
+  let currentMatchups = initialMatchups.map((matchup) => ({ ...matchup }));
+
+  while (currentMatchups.length > 0) {
+    const completedMatchups = currentMatchups.map((matchup) => ({
+      ...matchup,
+      winner: getMatchupWinner(matchup),
+    }));
+
+    rounds.push({
+      name: getRoundName(completedMatchups.length),
+      matchups: completedMatchups,
+    });
+
+    if (completedMatchups.length === 1) {
+      break;
+    }
+
+    const nextRoundMatchupCount = completedMatchups.length / 2;
+    const nextRoundKey = getRoundKey(nextRoundMatchupCount);
+    currentMatchups = generateNextRoundMatchups(completedMatchups, nextRoundKey);
+  }
+
+  return rounds;
+}
+
 export function generateRoundOneMatchups(teams: Team[]): Matchup[] {
   const regions = ['East', 'West', 'South', 'Midwest'];
   const allMatchups: Matchup[] = [];
@@ -138,7 +129,7 @@ export function generateRoundOneMatchups(teams: Team[]): Matchup[] {
     regionMatchups.forEach((matchup) => {
       allMatchups.push({
         ...matchup,
-        id: `matchup-${matchupNumber}`,
+        id: `round-of-64-matchup-${matchupNumber}`,
       });
       matchupNumber += 1;
     });

@@ -12,10 +12,9 @@ function BracketView({ tournamentRounds, teams }: BracketViewProps) {
   const championship = tournamentRounds.find(
     (round) => round.name === 'Championship'
   );
-  const champion =
-    tournamentRounds.length > 0
-      ? tournamentRounds[tournamentRounds.length - 1].winners[0]
-      : null;
+  const championshipMatchup =
+    championship?.matchups.length ? championship.matchups[0] : undefined;
+  const champion = championshipMatchup?.winner ?? null;
 
   return (
     <div className={styles.wrapper}>
@@ -49,7 +48,7 @@ function BracketView({ tournamentRounds, teams }: BracketViewProps) {
                   <GameBox
                     topTeam={matchup.teamA}
                     bottomTeam={matchup.teamB}
-                    winnerId={getWinnerId(matchup, finalFour)}
+                    winnerId={getWinnerId(matchup)}
                   />
                 </div>
               ))}
@@ -62,7 +61,7 @@ function BracketView({ tournamentRounds, teams }: BracketViewProps) {
                   <GameBox
                     topTeam={matchup.teamA}
                     bottomTeam={matchup.teamB}
-                    winnerId={getWinnerId(matchup, championship)}
+                    winnerId={getWinnerId(matchup)}
                   />
                 </div>
               ))}
@@ -86,7 +85,7 @@ function BracketView({ tournamentRounds, teams }: BracketViewProps) {
                   <GameBox
                     topTeam={matchup.teamA}
                     bottomTeam={matchup.teamB}
-                    winnerId={getWinnerId(matchup, finalFour)}
+                    winnerId={getWinnerId(matchup)}
                   />
                 </div>
               ))}
@@ -165,7 +164,7 @@ function RegionBracket({
                 topTeam={game[0]}
                 bottomTeam={game[1]}
                 winnerId={
-                  actualMatchup ? getWinnerId(actualMatchup, roundOf64) : undefined
+                  actualMatchup ? getWinnerId(actualMatchup) : undefined
                 }
               />
             );
@@ -183,7 +182,7 @@ function RegionBracket({
               key={matchup.id}
               topTeam={matchup.teamA}
               bottomTeam={matchup.teamB}
-              winnerId={getWinnerId(matchup, roundOf32)}
+              winnerId={getWinnerId(matchup)}
             />
           ))}
         />
@@ -199,7 +198,7 @@ function RegionBracket({
               key={matchup.id}
               topTeam={matchup.teamA}
               bottomTeam={matchup.teamB}
-              winnerId={getWinnerId(matchup, sweet16)}
+              winnerId={getWinnerId(matchup)}
             />
           ))}
         />
@@ -214,7 +213,7 @@ function RegionBracket({
               key={matchup.id}
               topTeam={matchup.teamA}
               bottomTeam={matchup.teamB}
-              winnerId={getWinnerId(matchup, elite8)}
+              winnerId={getWinnerId(matchup)}
             />
           ))}
         />
@@ -372,23 +371,8 @@ function filterRoundMatchupsByRegion(
   );
 }
 
-function getWinnerId(
-  matchup: Matchup,
-  round: TournamentRound | undefined
-): string | undefined {
-  if (!round) {
-    return undefined;
-  }
-
-  const matchupIndex = round.matchups.findIndex(
-    (roundMatchup) => roundMatchup.id === matchup.id
-  );
-
-  if (matchupIndex === -1) {
-    return undefined;
-  }
-
-  return round.winners[matchupIndex]?.id;
+function getWinnerId(matchup: Matchup): string | undefined {
+  return matchup.winner?.id;
 }
 
 export default BracketView;
