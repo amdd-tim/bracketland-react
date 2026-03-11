@@ -8,110 +8,100 @@ type BracketViewProps = {
 };
 
 function BracketView({ tournamentRounds, teams }: BracketViewProps) {
-  const leftRegions = ['East', 'West'];
-  const rightRegions = ['South', 'Midwest'];
-
   const finalFour = tournamentRounds.find((round) => round.name === 'Final Four');
   const championship = tournamentRounds.find(
     (round) => round.name === 'Championship'
   );
-
   const champion =
     tournamentRounds.length > 0
       ? tournamentRounds[tournamentRounds.length - 1].winners[0]
       : null;
 
   return (
-    <section className={styles.wrapper}>
+    <div className={styles.wrapper}>
       <h2 className={styles.title}>Tournament Bracket</h2>
 
-      <div className={styles.layout}>
-        <RegionSide
-          regions={leftRegions}
-          teams={teams}
-          tournamentRounds={tournamentRounds}
-          side="left"
-        />
+      <div className={styles.bracketGrid}>
+        <div className={styles.regionCell}>
+          <RegionBracket
+            region="East"
+            teams={teams}
+            tournamentRounds={tournamentRounds}
+            side="left"
+          />
+        </div>
 
-        <section className={styles.centerPanel}>
-          <h3 className={styles.sectionTitle}>Final Rounds</h3>
+        <div className={styles.regionCell}>
+          <RegionBracket
+            region="West"
+            teams={teams}
+            tournamentRounds={tournamentRounds}
+            side="right"
+          />
+        </div>
 
-          <section className={styles.centerRound}>
-            <h4 className={styles.roundHeading}>Final Four</h4>
+        <div className={styles.finalsRow}>
+          <h3 className={styles.sectionTitle}>Final Four</h3>
 
-            <div className={styles.finalFourGrid}>
-              {(finalFour?.matchups ?? []).map((matchup, index) => (
+          <div className={styles.finalsInner}>
+            {(finalFour?.matchups ?? []).map((matchup) => (
+              <div key={matchup.id} className={styles.finalFourGame}>
                 <GameBox
-                  key={matchup.id}
                   topTeam={matchup.teamA}
                   bottomTeam={matchup.teamB}
-                  winnerId={finalFour?.winners[index]?.id}
+                  winnerId={getWinnerId(matchup, finalFour)}
                 />
-              ))}
-            </div>
-          </section>
+              </div>
+            ))}
+          </div>
 
-          <section className={styles.centerRound}>
-            <h4 className={styles.roundHeading}>Championship</h4>
-
-            <div className={styles.championshipGrid}>
-              {(championship?.matchups ?? []).map((matchup, index) => (
-                <div key={matchup.id} className={styles.championshipGame}>
-                  <GameBox
-                    topTeam={matchup.teamA}
-                    bottomTeam={matchup.teamB}
-                    winnerId={championship?.winners[index]?.id}
-                  />
-                </div>
-              ))}
-            </div>
-          </section>
+          {(championship?.matchups ?? []).length ? (
+            <>
+              <h4 className={styles.roundHeading}>Championship</h4>
+              <div className={styles.championshipWrap}>
+                {championship?.matchups.map((matchup) => (
+                  <div key={matchup.id} className={styles.championshipGame}>
+                    <GameBox
+                      topTeam={matchup.teamA}
+                      bottomTeam={matchup.teamB}
+                      winnerId={getWinnerId(matchup, championship)}
+                    />
+                  </div>
+                ))}
+              </div>
+            </>
+          ) : null}
 
           {champion && (
             <div className={styles.championBlock}>
-              <h4>Champion</h4>
-              <p>
-                <strong>{champion.name}</strong>
-              </p>
+              <h4 className={styles.roundHeading}>Champion</h4>
+              <div className={styles.gameBox}>
+                <div className={`${styles.teamLine} ${styles.teamLineWinner}`}>
+                  <span>{champion.name}</span>
+                </div>
+              </div>
             </div>
           )}
-        </section>
+        </div>
 
-        <RegionSide
-          regions={rightRegions}
-          teams={teams}
-          tournamentRounds={tournamentRounds}
-          side="right"
-        />
+        <div className={styles.regionCell}>
+          <RegionBracket
+            region="South"
+            teams={teams}
+            tournamentRounds={tournamentRounds}
+            side="left"
+          />
+        </div>
+
+        <div className={styles.regionCell}>
+          <RegionBracket
+            region="Midwest"
+            teams={teams}
+            tournamentRounds={tournamentRounds}
+            side="right"
+          />
+        </div>
       </div>
-    </section>
-  );
-}
-
-type RegionSideProps = {
-  regions: string[];
-  teams: Team[];
-  tournamentRounds: TournamentRound[];
-  side: 'left' | 'right';
-};
-
-function RegionSide({
-  regions,
-  teams,
-  tournamentRounds,
-  side,
-}: RegionSideProps) {
-  return (
-    <div className={styles.regionSide}>
-      {regions.map((region) => (
-        <RegionBracket
-          key={region}
-          region={region}
-          teams={teams}
-          tournamentRounds={tournamentRounds}
-          side={side}
-        />
-      ))}
     </div>
   );
 }
@@ -325,8 +315,8 @@ function TeamLine({ team, isWinner = false }: TeamLineProps) {
       />
 
       <span className={styles.teamName}>
-        {team.name}
         <sup className={styles.seed}>{team.seed}</sup>
+        {team.name}
       </span>
     </div>
   );
