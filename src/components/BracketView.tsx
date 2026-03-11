@@ -48,10 +48,22 @@ function BracketView({ tournamentRounds, teams }: BracketViewProps) {
           {tournamentRounds.slice(-3).map((round) => (
             <section key={round.name} style={{ marginBottom: '1.5rem' }}>
               <h4 style={{ marginBottom: '0.75rem' }}>{round.name}</h4>
-              <p>
-                {round.matchups.length} matchup
-                {round.matchups.length !== 1 ? 's' : ''}
-              </p>
+
+              <div
+                style={{
+                  display: 'grid',
+                  gap: getRoundGap(round.matchups.length),
+                }}
+              >
+                {round.matchups.map((matchup, index) => (
+                  <GameBox
+                    key={matchup.id}
+                    topTeam={matchup.teamA}
+                    bottomTeam={matchup.teamB}
+                    winnerId={round.winners[index]?.id}
+                  />
+                ))}
+              </div>
             </section>
           ))}
 
@@ -88,9 +100,6 @@ type RegionSideProps = {
 };
 
 function RegionSide({ regions, teams, tournamentRounds }: RegionSideProps) {
-  const roundOf64 = tournamentRounds.find((round) => round.name === 'Round of 64');
-  const roundOf32 = tournamentRounds.find((round) => round.name === 'Round of 32');
-
   return (
     <div
       style={{
@@ -98,86 +107,142 @@ function RegionSide({ regions, teams, tournamentRounds }: RegionSideProps) {
         gap: '1.5rem',
       }}
     >
-      {regions.map((region) => {
-        const regionTeams = teams.filter((team) => team.region === region);
-        const firstRoundGames = buildRegionFirstRound(regionTeams);
+      {regions.map((region) => (
+        <RegionBracket
+          key={region}
+          region={region}
+          teams={teams}
+          tournamentRounds={tournamentRounds}
+        />
+      ))}
+    </div>
+  );
+}
 
-        const roundOf64Matchups = (roundOf64?.matchups ?? []).filter(
-          (matchup) =>
-            matchup.teamA.region === region && matchup.teamB.region === region
-        );
+type RegionBracketProps = {
+  region: string;
+  teams: Team[];
+  tournamentRounds: TournamentRound[];
+};
 
-        const roundOf32Teams = (roundOf32?.matchups ?? [])
-          .flatMap((matchup) => [matchup.teamA, matchup.teamB])
-          .filter((team) => team.region === region);
+function RegionBracket({ region, teams, tournamentRounds }: RegionBracketProps) {
+  const roundOf64 = tournamentRounds.find((round) => round.name === 'Round of 64');
+  const roundOf32 = tournamentRounds.find((round) => round.name === 'Round of 32');
+  const sweet16 = tournamentRounds.find((round) => round.name === 'Sweet 16');
+  const elite8 = tournamentRounds.find((round) => round.name === 'Elite 8');
 
-        const roundOf32Games = pairTeamsInOrder(roundOf32Teams);
+  const regionTeams = teams.filter((team) => team.region === region);
+  const firstRoundGames = buildRegionFirstRound(regionTeams);
 
-        return (
-          <section
-            key={region}
-            style={{
-              background: 'white',
-              border: '1px solid #ddd',
-              borderRadius: '1rem',
-              padding: '1rem',
-            }}
-          >
-            <h3 style={{ marginBottom: '1rem' }}>{region}</h3>
+  const regionRound64Matchups = filterRoundMatchupsByRegion(roundOf64, region);
+  const regionRound32Matchups = filterRoundMatchupsByRegion(roundOf32, region);
+  const regionSweet16Matchups = filterRoundMatchupsByRegion(sweet16, region);
+  const regionElite8Matchups = filterRoundMatchupsByRegion(elite8, region);
 
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: '1fr 1fr',
-                gap: '1rem',
-                alignItems: 'start',
-              }}
-            >
-              <div>
-                <h4 style={{ marginBottom: '0.75rem' }}>Round of 64</h4>
-                <div
-                  style={{
-                    display: 'grid',
-                    gap: '0.75rem',
-                  }}
-                >
-                  {firstRoundGames.map((game, index) => {
-                    const actualMatchup = roundOf64Matchups[index];
+  return (
+    <section
+      style={{
+        background: 'white',
+        border: '1px solid #ddd',
+        borderRadius: '1rem',
+        padding: '1rem',
+      }}
+    >
+      <h3 style={{ marginBottom: '1rem' }}>{region}</h3>
 
-                    return (
-                      <GameBox
-                        key={`${region}-r64-${index}`}
-                        topTeam={game[0]}
-                        bottomTeam={game[1]}
-                        winnerId={actualMatchup ? getWinnerId(actualMatchup, roundOf64) : undefined}
-                      />
-                    );
-                  })}
-                </div>
-              </div>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(4, minmax(160px, 1fr))',
+          gap: '1rem',
+          alignItems: 'start',
+          overflowX: 'auto',
+        }}
+      >
+        <RoundColumn
+          title="Round of 64"
+          gap="0.75rem"
+          games={firstRoundGames.map((game, index) => {
+            const actualMatchup = regionRound64Matchups[index];
 
-              <div>
-                <h4 style={{ marginBottom: '0.75rem' }}>Round of 32</h4>
-                <div
-                  style={{
-                    display: 'grid',
-                    gap: '1.5rem',
-                    marginTop: '2.25rem',
-                  }}
-                >
-                  {roundOf32Games.map((game, index) => (
-                    <GameBox
-                      key={`${region}-r32-${index}`}
-                      topTeam={game[0]}
-                      bottomTeam={game[1]}
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
-          </section>
-        );
-      })}
+            return (
+              <GameBox
+                key={`${region}-r64-${index}`}
+                topTeam={game[0]}
+                bottomTeam={game[1]}
+                winnerId={actualMatchup ? getWinnerId(actualMatchup, roundOf64) : undefined}
+              />
+            );
+          })}
+        />
+
+        <RoundColumn
+          title="Round of 32"
+          gap="1.5rem"
+          offset="2rem"
+          games={regionRound32Matchups.map((matchup) => (
+            <GameBox
+              key={matchup.id}
+              topTeam={matchup.teamA}
+              bottomTeam={matchup.teamB}
+              winnerId={getWinnerId(matchup, roundOf32)}
+            />
+          ))}
+        />
+
+        <RoundColumn
+          title="Sweet 16"
+          gap="3rem"
+          offset="4rem"
+          games={regionSweet16Matchups.map((matchup) => (
+            <GameBox
+              key={matchup.id}
+              topTeam={matchup.teamA}
+              bottomTeam={matchup.teamB}
+              winnerId={getWinnerId(matchup, sweet16)}
+            />
+          ))}
+        />
+
+        <RoundColumn
+          title="Elite 8"
+          gap="6rem"
+          offset="7rem"
+          games={regionElite8Matchups.map((matchup) => (
+            <GameBox
+              key={matchup.id}
+              topTeam={matchup.teamA}
+              bottomTeam={matchup.teamB}
+              winnerId={getWinnerId(matchup, elite8)}
+            />
+          ))}
+        />
+      </div>
+    </section>
+  );
+}
+
+type RoundColumnProps = {
+  title: string;
+  games: React.ReactNode[];
+  gap: string;
+  offset?: string;
+};
+
+function RoundColumn({ title, games, gap, offset = '0' }: RoundColumnProps) {
+  return (
+    <div>
+      <h4 style={{ marginBottom: '0.75rem' }}>{title}</h4>
+
+      <div
+        style={{
+          display: 'grid',
+          gap,
+          marginTop: offset,
+        }}
+      >
+        {games}
+      </div>
     </div>
   );
 }
@@ -268,14 +333,18 @@ function buildRegionFirstRound(
   ]);
 }
 
-function pairTeamsInOrder(teams: Team[]): Array<[Team | undefined, Team | undefined]> {
-  const pairs: Array<[Team | undefined, Team | undefined]> = [];
-
-  for (let i = 0; i < teams.length; i += 2) {
-    pairs.push([teams[i], teams[i + 1]]);
+function filterRoundMatchupsByRegion(
+  round: TournamentRound | undefined,
+  region: string
+): Matchup[] {
+  if (!round) {
+    return [];
   }
 
-  return pairs;
+  return round.matchups.filter(
+    (matchup) =>
+      matchup.teamA.region === region && matchup.teamB.region === region
+  );
 }
 
 function getWinnerId(
@@ -295,6 +364,19 @@ function getWinnerId(
   }
 
   return round.winners[matchupIndex]?.id;
+}
+
+function getRoundGap(matchupCount: number): string {
+  switch (matchupCount) {
+    case 4:
+      return '3rem';
+    case 2:
+      return '5rem';
+    case 1:
+      return '7rem';
+    default:
+      return '1rem';
+  }
 }
 
 export default BracketView;
