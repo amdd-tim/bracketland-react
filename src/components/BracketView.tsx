@@ -68,7 +68,12 @@ function BracketView({
             </div>
 
             <div className={styles.finalsColumn}>
-              <h4 className={styles.roundHeading}>Championship</h4>
+              {champion && (
+                <div className={styles.championBlock}>
+                  <h4 className={styles.roundHeading}>Champion</h4>
+                  <img src={`https://a.espncdn.com/i/teamlogos/ncaa/500/${champion.teamLogoId}.png`} alt="" className={styles.teamLogo} />
+                </div>
+              )}
               {(championship?.matchups ?? []).map((matchup) => (
                 <div key={matchup.id} className={styles.championshipGame}>
                   <GameBox
@@ -82,17 +87,6 @@ function BracketView({
                   />
                 </div>
               ))}
-
-              {champion && (
-                <div className={styles.championBlock}>
-                  <h4 className={styles.roundHeading}>Champion</h4>
-                  <div className={styles.gameBox}>
-                    <div className={`${styles.teamLine} ${styles.teamLineWinner}`}>
-                      <span>{champion.name}</span>
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
 
             <div className={styles.finalsColumn}>
