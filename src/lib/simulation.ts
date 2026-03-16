@@ -22,6 +22,27 @@ function winProbability(teamA: Team, teamB: Team): number {
   return studentTCdf(tScore, MEN_T_DF);
 }
 
+export function getMatchupWinProbabilities(matchup: Matchup): {
+  teamA: number;
+  teamB: number;
+} {
+  const { teamA, teamB } = matchup;
+
+  if (!teamA || !teamB) {
+    return {
+      teamA: 0,
+      teamB: 0,
+    };
+  }
+
+  const probabilityA = winProbability(teamA, teamB);
+
+  return {
+    teamA: probabilityA,
+    teamB: 1 - probabilityA,
+  };
+}
+
 /**
  * NCAA tournament defaults:
  * - neutral site => no home-court bonus

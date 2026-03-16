@@ -1,6 +1,9 @@
 import type { ReactNode } from 'react';
 import type { Matchup, Team } from '../lib/types';
-import type { TournamentRound } from '../lib/simulation';
+import {
+  getMatchupWinProbabilities,
+  type TournamentRound,
+} from '../lib/simulation';
 import styles from './BracketView.module.css';
 
 type BracketViewProps = {
@@ -56,6 +59,7 @@ function BracketView({
                   <GameBox
                     roundName={finalFour?.name ?? ''}
                     matchupId={matchup.id}
+                    matchup={matchup}
                     topTeam={matchup.teamA}
                     bottomTeam={matchup.teamB}
                     winnerId={getWinnerId(matchup)}
@@ -72,6 +76,7 @@ function BracketView({
                   <GameBox
                     roundName={championship?.name ?? ''}
                     matchupId={matchup.id}
+                    matchup={matchup}
                     topTeam={matchup.teamA}
                     bottomTeam={matchup.teamB}
                     winnerId={getWinnerId(matchup)}
@@ -99,6 +104,7 @@ function BracketView({
                   <GameBox
                     roundName={finalFour?.name ?? ''}
                     matchupId={matchup.id}
+                    matchup={matchup}
                     topTeam={matchup.teamA}
                     bottomTeam={matchup.teamB}
                     winnerId={getWinnerId(matchup)}
@@ -179,6 +185,7 @@ function RegionBracket({
             <GameBox
               roundName={roundOf64?.name ?? ''}
               matchupId={matchup.id}
+              matchup={matchup}
               topTeam={matchup.teamA}
               bottomTeam={matchup.teamB}
               winnerId={getWinnerId(matchup)}
@@ -197,6 +204,7 @@ function RegionBracket({
             <GameBox
               roundName={roundOf32?.name ?? ''}
               matchupId={matchup.id}
+              matchup={matchup}
               topTeam={matchup.teamA}
               bottomTeam={matchup.teamB}
               winnerId={getWinnerId(matchup)}
@@ -215,6 +223,7 @@ function RegionBracket({
             <GameBox
               roundName={sweet16?.name ?? ''}
               matchupId={matchup.id}
+              matchup={matchup}
               topTeam={matchup.teamA}
               bottomTeam={matchup.teamB}
               winnerId={getWinnerId(matchup)}
@@ -232,6 +241,7 @@ function RegionBracket({
             <GameBox
               roundName={elite8?.name ?? ''}
               matchupId={matchup.id}
+              matchup={matchup}
               topTeam={matchup.teamA}
               bottomTeam={matchup.teamB}
               winnerId={getWinnerId(matchup)}
@@ -307,6 +317,7 @@ function RoundColumn({
 type GameBoxProps = {
   roundName: string;
   matchupId: string;
+  matchup: Matchup;
   topTeam?: Team;
   bottomTeam?: Team;
   winnerId?: string;
@@ -315,16 +326,20 @@ type GameBoxProps = {
 
 function GameBox({
   roundName,
-  matchupId,
+  matchup,
   topTeam,
   bottomTeam,
   winnerId,
   onPickWinner,
 }: GameBoxProps) {
+  const { teamA, teamB, id: matchupId } = matchup;
+
+  const probabilities = getMatchupWinProbabilities(matchup);
   return (
     <div className={styles.gameBox}>
       <TeamLine
         team={topTeam}
+        probability={probabilities.teamA}
         isWinner={winnerId === topTeam?.id}
         onClick={
           topTeam ? () => onPickWinner(roundName, matchupId, topTeam.id) : undefined
@@ -332,6 +347,7 @@ function GameBox({
       />
       <TeamLine
         team={bottomTeam}
+        probability={probabilities.teamB}
         isWinner={winnerId === bottomTeam?.id}
         onClick={
           bottomTeam
@@ -345,11 +361,16 @@ function GameBox({
 
 type TeamLineProps = {
   team?: Team;
+  probability?: number;
   isWinner?: boolean;
   onClick?: () => void;
 };
 
-function TeamLine({ team, isWinner = false, onClick }: TeamLineProps) {
+function TeamLine({ 
+  team, 
+  probability, 
+  isWinner = false, 
+  onClick }: TeamLineProps) {
   if (!team) {
     return (
       <div className={styles.teamLineEmpty}>
@@ -359,6 +380,11 @@ function TeamLine({ team, isWinner = false, onClick }: TeamLineProps) {
   }
 
   const logoUrl = `https://a.espncdn.com/i/teamlogos/ncaa/500/${team.teamLogoId}.png`;
+
+  const probabilityLabel =
+    typeof probability === 'number'
+      ? `${Math.round(probability * 100)}%`
+      : '';
 
   return (
     <button
@@ -371,6 +397,7 @@ function TeamLine({ team, isWinner = false, onClick }: TeamLineProps) {
         <span>{team.name}</span>
         <sup className={styles.seed}>{team.seed}</sup>
       </span>
+      <span className={styles.teamProbability}>{probabilityLabel}</span>
     </button>
   );
 }
