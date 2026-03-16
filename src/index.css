@@ -18,7 +18,33 @@ body {
 main {
   /* max-width: 1100px; */
   margin: 0 auto;
-  padding: 2rem;
+  padding-inline: 2rem;
+}
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding-block: 1rem;
+  background: #f7f7f7;
+}
+
+.app-header h1 {
+  margin: 0;
+}
+
+.app-controls {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  background: #f7f7f7;
+}
+
+.app-controls button {
+  margin: 0;
 }
 
 section {
@@ -57,18 +83,6 @@ pre {
   background: #fff;
   border: 1px solid #ddd;
   border-radius: 0.5rem;
-}
-
-.app-controls {
-  display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-  margin-bottom: 1.5rem;
-  position: sticky;
-  top: 0;
-  background: #f7f7f7;
-  padding: 1rem;
-  z-index: 10;
 }
 
 @media print {

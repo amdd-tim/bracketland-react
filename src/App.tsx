@@ -69,14 +69,13 @@ function App() {
 
   return (
     <main>
-      <h1>Bracketland</h1>
-
-      <div className="app-controls">
-        <button onClick={generateBracket}>Generate Bracket</button>
-        <button onClick={printBracket}>Print Bracket</button>
-        <button onClick={() => setShowTeams(!showTeams)}>
-          {showTeams ? 'Hide Teams' : 'Show Teams'}
-        </button>
+      
+      <div className="app-header">
+        <h1>Bracketland</h1>
+        <div className="app-controls">
+          <button onClick={generateBracket}>Generate Bracket</button>
+          <button onClick={printBracket}>Print Bracket</button>
+        </div>
       </div>
 
       <BracketView
@@ -84,15 +83,6 @@ function App() {
         teams={teams}
         onPickWinner={handlePickWinner}
       />
-
-      {showTeams && (
-        <>
-          <h2>All Teams</h2>
-          {teams.map((team) => (
-            <TeamCard key={team.id} team={team} />
-          ))}
-        </>
-      )}
     </main>
   );
 }

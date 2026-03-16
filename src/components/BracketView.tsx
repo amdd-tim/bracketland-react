@@ -27,8 +27,6 @@ function BracketView({
 
   return (
     <div className={styles.wrapper}>
-      <h2 className={styles.title}>Tournament Bracket</h2>
-
       <div className={styles.bracketGrid}>
         <div className={styles.regionCell}>
           <RegionBracket
