@@ -4,6 +4,7 @@ export type Team = {
   seed: number;
   region: string;
   cooperRating: number;
+  teamLogoId: string;
 };
 
 export type Matchup = {

@@ -7,6 +7,7 @@ type TournamentTeamRow = {
   displayName: string;
   seed: number;
   region: string;
+  teamLogoId: string;
 };
 
 type CooperRatingRow = {
@@ -84,6 +85,7 @@ export function rowsToTournamentTeams(rows: CsvRow[]): TournamentTeamRow[] {
     displayName: row.display_name,
     seed: toNumber(row.seed),
     region: row.region,
+    teamLogoId: row.team_logo_id || '',
   }));
 }
 
@@ -135,6 +137,7 @@ export function mergeTeams(
       seed: team.seed,
       region: team.region,
       cooperRating: cooper.cooperRating,
+      teamLogoId: team.teamLogoId,
     };
   });
 }

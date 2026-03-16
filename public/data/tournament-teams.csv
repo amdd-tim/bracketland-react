@@ -1,69 +1,69 @@
-team_key,display_name,seed,region
-duke,Duke,1,East
-siena,Siena,16,East
-ohio_state,Ohio State,8,East
-tcu,TCU,9,East
-st_johns,St. John's,5,East
-northern_iowa,Northern Iowa,12,East
-kansas,Kansas,4,East
-cal_baptist,Cal Baptist,13,East
-louisville,Louisville,6,East
-south_florida,South Florida,11,East
-michigan_state,Michigan State,3,East
-north_dakota_state,North Dakota State,14,East
-ucla,UCLA,7,East
-ucf,UCF,10,East
-uconn,UConn,2,East
-furman,Furman,15,East
-florida,Florida,1,South
-prairie_view_am,Prairie View A&M,16,South
-lehigh,Lehigh,16,South
-clemson,Clemson,8,South
-iowa,Iowa,9,South
-vanderbilt,Vanderbilt,5,South
-mcneese,McNeese,12,South
-nebraska,Nebraska,4,South
-troy,Troy,13,South
-north_carolina,North Carolina,6,South
-vcu,VCU,11,South
-illinois,Illinois,3,South
-penn,Penn,14,South
-saint_marys,Saint Mary's,7,South
-texas_am,Texas A&M,10,South
-houston,Houston,2,South
-idaho,Idaho,15,South
-arizona,Arizona,1,West
-liu,LIU,16,West
-villanova,Villanova,8,West
-utah_state,Utah State,9,West
-wisconsin,Wisconsin,5,West
-high_point,High Point,12,West
-arkansas,Arkansas,4,West
-hawaii,Hawai'i,13,West
-byu,BYU,6,West
-texas,Texas,11,West
-nc_state,NC State,11,West
-gonzaga,Gonzaga,3,West
-kennesaw_state,Kennesaw State,14,West
-miami_fl,Miami (FL),7,West
-missouri,Missouri,10,West
-purdue,Purdue,2,West
-queens,Queens,15,West
-michigan,Michigan,1,Midwest
-umbc,UMBC,16,Midwest
-howard,Howard,16,Midwest
-georgia,Georgia,8,Midwest
-saint_louis,Saint Louis,9,Midwest
-texas_tech,Texas Tech,5,Midwest
-akron,Akron,12,Midwest
-alabama,Alabama,4,Midwest
-hofstra,Hofstra,13,Midwest
-tennessee,Tennessee,6,Midwest
-miami_oh,Miami (OH),11,Midwest
-smu,SMU,11,Midwest
-virginia,Virginia,3,Midwest
-wright_state,Wright State,14,Midwest
-kentucky,Kentucky,7,Midwest
-santa_clara,Santa Clara,10,Midwest
-iowa_state,Iowa State,2,Midwest
-tennessee_state,Tennessee State,15,Midwest
+team_key,display_name,seed,region,team_logo_id
+duke,Duke,1,East,150
+siena,Siena,16,East,2561
+ohio_state,Ohio State,8,East,194
+tcu,TCU,9,East,2628
+st_johns,St. John's,5,East,2599
+northern_iowa,Northern Iowa,12,East,2460
+kansas,Kansas,4,East,2305
+cal_baptist,Cal Baptist,13,East,2856
+louisville,Louisville,6,East,97
+south_florida,South Florida,11,East,58
+michigan_state,Michigan State,3,East,127
+north_dakota_state,North Dakota State,14,East,2449
+ucla,UCLA,7,East,26
+ucf,UCF,10,East,2116
+uconn,UConn,2,East,41
+furman,Furman,15,East,231
+florida,Florida,1,South,57
+prairie_view_am,Prairie View A&M,16,South,2504
+lehigh,Lehigh,16,South,2329
+clemson,Clemson,8,South,228
+iowa,Iowa,9,South,2294
+vanderbilt,Vanderbilt,5,South,238
+mcneese,McNeese,12,South,2377
+nebraska,Nebraska,4,South,158
+troy,Troy,13,South,2653
+north_carolina,North Carolina,6,South,153
+vcu,VCU,11,South,2670
+illinois,Illinois,3,South,356
+penn,Penn,14,South,219
+saint_marys,Saint Mary's,7,South,2608
+texas_am,Texas A&M,10,South,245
+houston,Houston,2,South,248
+idaho,Idaho,15,South,70
+arizona,Arizona,1,West,12
+liu,LIU,16,West,112358
+villanova,Villanova,8,West,222
+utah_state,Utah State,9,West,328
+wisconsin,Wisconsin,5,West,275
+high_point,High Point,12,West,2272
+arkansas,Arkansas,4,West,8
+hawaii,Hawai'i,13,West,62
+byu,BYU,6,West,252
+texas,Texas,11,West,251
+nc_state,NC State,11,West,152
+gonzaga,Gonzaga,3,West,2250
+kennesaw_state,Kennesaw State,14,West,338
+miami_fl,Miami (FL),7,West,2390
+missouri,Missouri,10,West,142
+purdue,Purdue,2,West,2509
+queens,Queens,15,West,2511
+michigan,Michigan,1,Midwest,130
+umbc,UMBC,16,Midwest,2378
+howard,Howard,16,Midwest,47
+georgia,Georgia,8,Midwest,61
+saint_louis,Saint Louis,9,Midwest,139
+texas_tech,Texas Tech,5,Midwest,2641
+akron,Akron,12,Midwest,2006
+alabama,Alabama,4,Midwest,333
+hofstra,Hofstra,13,Midwest,2275
+tennessee,Tennessee,6,Midwest,2633
+miami_oh,Miami (OH),11,Midwest,193
+smu,SMU,11,Midwest,2567
+virginia,Virginia,3,Midwest,258
+wright_state,Wright State,14,Midwest,2750
+kentucky,Kentucky,7,Midwest,96
+santa_clara,Santa Clara,10,Midwest,2541
+iowa_state,Iowa State,2,Midwest,66
+tennessee_state,Tennessee State,15,Midwest,2634

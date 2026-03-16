@@ -358,7 +358,7 @@ function TeamLine({ team, isWinner = false, onClick }: TeamLineProps) {
     );
   }
 
-  const logoUrl = `https://secure.espn.com/combiner/i?img=/i/teamlogos/ncaa/500/${team.id}.png&w=40&h=40`;
+  const logoUrl = `https://a.espncdn.com/i/teamlogos/ncaa/500/${team.teamLogoId}.png`;
 
   return (
     <button
