@@ -1,7 +1,13 @@
 import { useEffect, useState } from 'react';
 import type { Team } from './lib/types';
 import type { TournamentRound } from './lib/simulation';
-import { parseCsv, rowsToTeams } from './lib/csv';
+import {
+  mergeTeams,
+  parseCsv,
+  rowsToCooperNameMap,
+  rowsToCooperRatings,
+  rowsToTournamentTeams,
+} from './lib/csv';
 import { generateRoundOneMatchups, simulateTournament } from './lib/simulation';
 import { updateBracketWinner } from './lib/bracket';
 import BracketView from './components/BracketView';
@@ -14,10 +20,23 @@ function App() {
 
   useEffect(() => {
     async function loadData() {
-      const response = await fetch('/data/mm-data-2024.csv');
-      const text = await response.text();
-      const rows = parseCsv(text);
-      const loadedTeams = rowsToTeams(rows);
+      const [tournamentResponse, cooperResponse, mapResponse] = await Promise.all([
+        fetch('/data/tournament-teams.csv'),
+        fetch('/data/cooper-ratings.csv'),
+        fetch('/data/cooper-name-map.csv'),
+      ]);
+
+      const [tournamentText, cooperText, mapText] = await Promise.all([
+        tournamentResponse.text(),
+        cooperResponse.text(),
+        mapResponse.text(),
+      ]);
+
+      const tournamentRows = rowsToTournamentTeams(parseCsv(tournamentText));
+      const cooperRows = rowsToCooperRatings(parseCsv(cooperText));
+      const mapRows = rowsToCooperNameMap(parseCsv(mapText));
+
+      const loadedTeams = mergeTeams(tournamentRows, cooperRows, mapRows);
       const matchups = generateRoundOneMatchups(loadedTeams);
       const tournament = simulateTournament(matchups);
 

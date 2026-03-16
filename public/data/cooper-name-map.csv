@@ -1,16 +1,16 @@
 sb_name,team_key
 Duke,duke
 Siena,siena
-Ohio State,ohio_state
+Ohio St.,ohio_state
 TCU,tcu
 St. John's,st_johns
 Northern Iowa,northern_iowa
 Kansas,kansas
-Cal Baptist,cal_baptist
+California Baptist,cal_baptist
 Louisville,louisville
 South Florida,south_florida
 Michigan St.,michigan_state
-North Dakota State,north_dakota_state
+North Dakota St.,north_dakota_state
 UCLA,ucla
 UCF,ucf
 UConn,uconn
@@ -28,14 +28,14 @@ North Carolina,north_carolina
 VCU,vcu
 Illinois,illinois
 Penn,penn
-St. Mary's,saint_marys
+Saint Mary's (CA),saint_marys
 Texas A&M,texas_am
 Houston,houston
 Idaho,idaho
 Arizona,arizona
 LIU,liu
 Villanova,villanova
-Utah State,utah_state
+Utah St.,utah_state
 Wisconsin,wisconsin
 High Point,high_point
 Arkansas,arkansas
@@ -44,8 +44,8 @@ BYU,byu
 Texas,texas
 NC State,nc_state
 Gonzaga,gonzaga
-Kennesaw State,kennesaw_state
-Miami,miami_fl
+Kennesaw St.,kennesaw_state
+U Miami (FL),miami_fl
 Missouri,missouri
 Purdue,purdue
 Queens,queens
@@ -59,11 +59,11 @@ Akron,akron
 Alabama,alabama
 Hofstra,hofstra
 Tennessee,tennessee
-Miami (OH),miami_oh
+Miami University (OH),miami_oh
 SMU,smu
 Virginia,virginia
-Wright State,wright_state
+Wright St.,wright_state
 Kentucky,kentucky
 Santa Clara,santa_clara
 Iowa St.,iowa_state
-Tennessee State,tennessee_state
+Tennessee St.,tennessee_state

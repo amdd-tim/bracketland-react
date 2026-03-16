@@ -3,7 +3,7 @@ export type Team = {
   name: string;
   seed: number;
   region: string;
-  rating: number;
+  cooperRating: number;
 };
 
 export type Matchup = {
