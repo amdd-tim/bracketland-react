@@ -1,0 +1,69 @@
+team_key,display_name,seed,region
+duke,Duke,1,East
+siena,Siena,16,East
+ohio_state,Ohio State,8,East
+tcu,TCU,9,East
+st_johns,St. John's,5,East
+northern_iowa,Northern Iowa,12,East
+kansas,Kansas,4,East
+cal_baptist,Cal Baptist,13,East
+louisville,Louisville,6,East
+south_florida,South Florida,11,East
+michigan_state,Michigan State,3,East
+north_dakota_state,North Dakota State,14,East
+ucla,UCLA,7,East
+ucf,UCF,10,East
+uconn,UConn,2,East
+furman,Furman,15,East
+florida,Florida,1,South
+prairie_view_am,Prairie View A&M,16,South
+lehigh,Lehigh,16,South
+clemson,Clemson,8,South
+iowa,Iowa,9,South
+vanderbilt,Vanderbilt,5,South
+mcneese,McNeese,12,South
+nebraska,Nebraska,4,South
+troy,Troy,13,South
+north_carolina,North Carolina,6,South
+vcu,VCU,11,South
+illinois,Illinois,3,South
+penn,Penn,14,South
+saint_marys,Saint Mary's,7,South
+texas_am,Texas A&M,10,South
+houston,Houston,2,South
+idaho,Idaho,15,South
+arizona,Arizona,1,West
+liu,LIU,16,West
+villanova,Villanova,8,West
+utah_state,Utah State,9,West
+wisconsin,Wisconsin,5,West
+high_point,High Point,12,West
+arkansas,Arkansas,4,West
+hawaii,Hawai'i,13,West
+byu,BYU,6,West
+texas,Texas,11,West
+nc_state,NC State,11,West
+gonzaga,Gonzaga,3,West
+kennesaw_state,Kennesaw State,14,West
+miami_fl,Miami (FL),7,West
+missouri,Missouri,10,West
+purdue,Purdue,2,West
+queens,Queens,15,West
+michigan,Michigan,1,Midwest
+umbc,UMBC,16,Midwest
+howard,Howard,16,Midwest
+georgia,Georgia,8,Midwest
+saint_louis,Saint Louis,9,Midwest
+texas_tech,Texas Tech,5,Midwest
+akron,Akron,12,Midwest
+alabama,Alabama,4,Midwest
+hofstra,Hofstra,13,Midwest
+tennessee,Tennessee,6,Midwest
+miami_oh,Miami (OH),11,Midwest
+smu,SMU,11,Midwest
+virginia,Virginia,3,Midwest
+wright_state,Wright State,14,Midwest
+kentucky,Kentucky,7,Midwest
+santa_clara,Santa Clara,10,Midwest
+iowa_state,Iowa State,2,Midwest
+tennessee_state,Tennessee State,15,Midwest
