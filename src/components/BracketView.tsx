@@ -39,7 +39,7 @@ function BracketView({
 
         <div className={styles.regionCell}>
           <RegionBracket
-            region="South"
+            region="West"
             teams={teams}
             tournamentRounds={tournamentRounds}
             side="right"
@@ -112,7 +112,7 @@ function BracketView({
 
         <div className={styles.regionCell}>
           <RegionBracket
-            region="West"
+            region="South"
             teams={teams}
             tournamentRounds={tournamentRounds}
             side="left"
