@@ -13,6 +13,12 @@ type TournamentTeamRow = {
 type CooperRatingRow = {
   sbName: string;
   cooperRating: number;
+  pppg: number;
+  ppag: number;
+  netRating: number;
+  sos: number;
+  currentHfa: number;
+  leagueCurrentPpg: number;
 };
 
 type CooperNameMapRow = {
@@ -93,6 +99,12 @@ export function rowsToCooperRatings(rows: CsvRow[]): CooperRatingRow[] {
   return rows.map((row) => ({
     sbName: row.sb_name,
     cooperRating: toNumber(row.b_xelo_n),
+    pppg: toNumber(row.b_pppg_n),
+    ppag: toNumber(row.b_ppag_n),
+    netRating: toNumber(row.b_netrating_n),
+    sos: toNumber(row.sos),
+    currentHfa: toNumber(row.current_hfa),
+    leagueCurrentPpg: toNumber(row.league_current_ppg),
   }));
 }
 
@@ -136,8 +148,14 @@ export function mergeTeams(
       name: team.displayName,
       seed: team.seed,
       region: team.region,
-      cooperRating: cooper.cooperRating,
       teamLogoId: team.teamLogoId,
+      cooperRating: cooper.cooperRating,
+      pppg: cooper.pppg,
+      ppag: cooper.ppag,
+      netRating: cooper.netRating,
+      sos: cooper.sos,
+      currentHfa: cooper.currentHfa,
+      leagueCurrentPpg: cooper.leagueCurrentPpg,
     };
   });
 }

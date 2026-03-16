@@ -3,8 +3,14 @@ export type Team = {
   name: string;
   seed: number;
   region: string;
-  cooperRating: number;
   teamLogoId: string;
+  cooperRating: number;
+  pppg: number;
+  ppag: number;
+  netRating: number;
+  sos: number;
+  currentHfa: number;
+  leagueCurrentPpg: number;
 };
 
 export type Matchup = {
