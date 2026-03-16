@@ -224,7 +224,7 @@ export function simulateTournament(initialMatchups: Matchup[]): TournamentRound[
 }
 
 export function generateRoundOneMatchups(teams: Team[]): Matchup[] {
-  const regions = ['East', 'West', 'South', 'Midwest'];
+  const regions = ['East', 'South', 'West', 'Midwest'];
   const allMatchups: Matchup[] = [];
   let matchupNumber = 1;
 
