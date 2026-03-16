@@ -19,11 +19,8 @@
   gap: 1.5rem;
 }
 
-.regionBracket {
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 1rem;
-  padding: 1rem;
+.regionBracket:has(.regionRoundsRight) h3 {
+  text-align: right;
 }
 
 .regionTitle {
@@ -32,9 +29,9 @@
 
 .regionRounds {
   display: grid;
-  grid-template-columns: repeat(4, minmax(160px, 1fr));
+  grid-template-columns: repeat(12, 1fr);
   align-items: stretch;
-  gap: 1rem;
+  gap: 16px;
   overflow-x: auto;
 }
 
@@ -61,13 +58,27 @@
 .roundColumn {
   display: flex;
   flex-direction: column;
+  grid-row: 1;
+}
+
+.roundColumn:nth-child(1) {
+  grid-column: 1 / span 4;
+}
+.roundColumn:nth-child(2) {
+  grid-column: 5 / span 4;
+}
+.roundColumn:nth-child(3) {
+  grid-column: 7 / span 4;
+}
+.roundColumn:nth-child(4) {
+  grid-column: 9 / span 4;
 }
 
 .roundGames {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 5px;
   margin-top: 0;
   justify-content: space-around;
 }
@@ -76,25 +87,75 @@
   margin-bottom: 0.75rem;
 }
 
-.gameWrapper {
+.gameWrapperTop,
+.gameWrapperBottom {
   position: relative;
 }
 
-.connectorLeft,
-.connectorRight {
+.gameWrapperTop::after {
+  content: '';
+  display: block;
   position: absolute;
+  width: 8px;
+  height: calc(50% + 5px);
+  border-right: solid 1px #000;
+  border-top: solid 1px #000;
   top: 50%;
-  width: 1rem;
-  border-top: 2px solid #ccc;
-  transform: translateY(-50%);
+  right: -8px;
 }
 
-.connectorLeft {
-  right: -1rem;
+.gameWrapperBottom::after {
+  content: '';
+  display: block;
+  position: absolute;
+  width: 8px;
+  height: calc(50% + 5px);
+  border-right: solid 1px #000;
+  border-bottom: solid 1px #000;
+  bottom: 50%;
+  right: -8px;
 }
 
-.connectorRight {
-  left: -1rem;
+.roundColumn:nth-child(2) .gameWrapperTop::before,
+.roundColumn:nth-child(2) .gameWrapperBottom::before  {
+  content: '';
+  display: block;
+  position: absolute;
+  width: 8px;
+  height: 1px;
+  background: #000;
+  top: 50%;
+  right: 100%;
+}
+
+.roundColumn:nth-child(3) .gameWrapperTop::after,
+.roundColumn:nth-child(3) .gameWrapperBottom::after  {
+  height: calc(150% + 10px);
+}
+
+.roundColumn:nth-child(4) .gameWrapperTop::after,
+.roundColumn:nth-child(4) .gameWrapperBottom::after  {
+  display: none;
+}
+
+.regionRoundsRight .gameWrapperTop::after {
+  left: -8px;
+  right: auto;
+  border-right: none;
+  border-left: solid 1px #000;
+}
+
+.regionRoundsRight .gameWrapperBottom::after {
+  left: -8px;
+  right: auto;
+  border-right: none;
+  border-left: solid 1px #000;
+}
+
+.regionRoundsRight .roundColumn:nth-child(2) .gameWrapperTop::before,
+.regionRoundsRight .roundColumn:nth-child(2) .gameWrapperBottom::before  {
+  right: auto;
+  left: 100%;
 }
 
 .gameBox {
@@ -102,15 +163,6 @@
   border: 1px solid #ddd;
   border-radius: 0.75rem;
   overflow: hidden;
-}
-
-.teamLine {
-  display: flex;
-  gap: 0.5rem;
-  padding: 0.65rem 0.75rem;
-  border-bottom: 1px solid #eee;
-  font-weight: 400;
-  background: white;
 }
 
 .teamLine span {
@@ -129,31 +181,6 @@
   gap: 0.5rem;
   padding: 0.65rem 0.75rem;
   border-bottom: 1px solid #eee;
-}
-
-.spineLeft,
-.spineRight {
-  position: absolute;
-  width: 1rem;
-  border-right: 2px solid #ccc;
-  top: 50%;
-  height: calc(100% + var(--round-gap, 0px));
-  pointer-events: none;
-}
-
-.spineLeft {
-  right: -1rem;
-}
-
-.spineRight {
-  left: -1rem;
-  border-right: none;
-  border-left: 2px solid #ccc;
-}
-
-.gameWrapperTop,
-.gameWrapperBottom {
-  position: relative;
 }
 
 .championBlock {
@@ -262,9 +289,14 @@
   border: 0;
   border-bottom: 1px solid #eee;
   background: white;
-  font: inherit;
   text-align: left;
   cursor: pointer;
+  margin: 0;
+  font-size: 12px;  
+}
+
+.teamProbability {
+  margin-left: auto;
 }
 
 .teamLine:hover {

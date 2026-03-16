@@ -273,15 +273,8 @@ function RoundColumn({
 }: RoundColumnProps) {
   return (
     <div className={styles.roundColumn}>
-      <h4 className={styles.roundColumnTitle}>{title}</h4>
-
       <div
         className={styles.roundGames}
-        style={{
-          gap,
-          marginTop: offset,
-          ['--round-gap' as string]: gap,
-        }}
       >
         {games.map((game, index) => {
           const isTopOfPair = index % 2 === 0;
@@ -394,8 +387,8 @@ function TeamLine({
     >
       <img src={logoUrl} alt="" className={styles.teamLogo} />
       <span className={styles.teamName}>
-        <span>{team.name}</span>
         <sup className={styles.seed}>{team.seed}</sup>
+        <span>{team.name}</span>
       </span>
       <span className={styles.teamProbability}>{probabilityLabel}</span>
     </button>
