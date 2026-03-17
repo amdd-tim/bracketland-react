@@ -5,7 +5,7 @@ import {
   mergeTeams,
   parseCsv,
   rowsToCooperNameMap,
-  rowsToCooperRatings,
+  rowsToAdjustedCompositeRatings,
   rowsToTournamentTeams,
 } from './lib/csv';
 import { generateRoundOneMatchups, simulateTournament } from './lib/simulation';
@@ -20,23 +20,23 @@ function App() {
 
   useEffect(() => {
     async function loadData() {
-      const [tournamentResponse, cooperResponse, mapResponse] = await Promise.all([
+      const [tournamentResponse, ratingsResponse, mapResponse] = await Promise.all([
         fetch('/data/tournament-teams.csv'),
-        fetch('/data/cooper-ratings.csv'),
+        fetch('/data/cooper-ratings-comp.csv'),
         fetch('/data/cooper-name-map.csv'),
       ]);
 
-      const [tournamentText, cooperText, mapText] = await Promise.all([
+      const [tournamentText, ratingsText, mapText] = await Promise.all([
         tournamentResponse.text(),
-        cooperResponse.text(),
+        ratingsResponse.text(),
         mapResponse.text(),
       ]);
 
       const tournamentRows = rowsToTournamentTeams(parseCsv(tournamentText));
-      const cooperRows = rowsToCooperRatings(parseCsv(cooperText));
+      const ratingsRows = rowsToAdjustedCompositeRatings(parseCsv(ratingsText));
       const mapRows = rowsToCooperNameMap(parseCsv(mapText));
 
-      const loadedTeams = mergeTeams(tournamentRows, cooperRows, mapRows);
+      const loadedTeams = mergeTeams(tournamentRows, ratingsRows, mapRows);
       const matchups = generateRoundOneMatchups(loadedTeams);
       const tournament = simulateTournament(matchups);
 

@@ -4,13 +4,7 @@ export type Team = {
   seed: number;
   region: string;
   teamLogoId: string;
-  cooperRating: number;
-  pppg: number;
-  ppag: number;
-  netRating: number;
-  sos: number;
-  currentHfa: number;
-  leagueCurrentPpg: number;
+  adjustedComposite: number;
 };
 
 export type Matchup = {

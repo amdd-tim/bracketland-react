@@ -10,15 +10,9 @@ type TournamentTeamRow = {
   teamLogoId: string;
 };
 
-type CooperRatingRow = {
+type AdjustedCompositeRatingRow = {
   sbName: string;
-  cooperRating: number;
-  pppg: number;
-  ppag: number;
-  netRating: number;
-  sos: number;
-  currentHfa: number;
-  leagueCurrentPpg: number;
+  adjustedComposite: number;
 };
 
 type CooperNameMapRow = {
@@ -95,16 +89,12 @@ export function rowsToTournamentTeams(rows: CsvRow[]): TournamentTeamRow[] {
   }));
 }
 
-export function rowsToCooperRatings(rows: CsvRow[]): CooperRatingRow[] {
+export function rowsToAdjustedCompositeRatings(
+  rows: CsvRow[]
+): AdjustedCompositeRatingRow[] {
   return rows.map((row) => ({
     sbName: row.sb_name,
-    cooperRating: toNumber(row.b_xelo_n),
-    pppg: toNumber(row.b_pppg_n),
-    ppag: toNumber(row.b_ppag_n),
-    netRating: toNumber(row.b_netrating_n),
-    sos: toNumber(row.sos),
-    currentHfa: toNumber(row.current_hfa),
-    leagueCurrentPpg: toNumber(row.league_current_ppg),
+    adjustedComposite: toNumber(row.adjusted_composite),
   }));
 }
 
@@ -117,29 +107,28 @@ export function rowsToCooperNameMap(rows: CsvRow[]): CooperNameMapRow[] {
 
 export function mergeTeams(
   tournamentTeams: TournamentTeamRow[],
-  cooperRatings: CooperRatingRow[],
+  ratings: AdjustedCompositeRatingRow[],
   cooperNameMap: CooperNameMapRow[]
 ): Team[] {
-  const teamKeyBySbName = new Map<string, string>(
+  const teamKeyBySbName = new Map(
     cooperNameMap.map((row) => [row.sbName, row.teamKey])
   );
 
-  const cooperByTeamKey = new Map<string, CooperRatingRow>();
+  const ratingsByTeamKey = new Map<string, AdjustedCompositeRatingRow>();
 
-  for (const row of cooperRatings) {
+  for (const row of ratings) {
     const teamKey = teamKeyBySbName.get(row.sbName);
-
     if (teamKey) {
-      cooperByTeamKey.set(teamKey, row);
+      ratingsByTeamKey.set(teamKey, row);
     }
   }
 
   return tournamentTeams.map((team) => {
-    const cooper = cooperByTeamKey.get(team.teamKey);
+    const rating = ratingsByTeamKey.get(team.teamKey);
 
-    if (!cooper) {
+    if (!rating) {
       throw new Error(
-        `Missing COOPER rating for ${team.displayName} (${team.teamKey})`
+        `Missing adjusted composite rating for ${team.displayName} (${team.teamKey})`
       );
     }
 
@@ -149,13 +138,7 @@ export function mergeTeams(
       seed: team.seed,
       region: team.region,
       teamLogoId: team.teamLogoId,
-      cooperRating: cooper.cooperRating,
-      pppg: cooper.pppg,
-      ppag: cooper.ppag,
-      netRating: cooper.netRating,
-      sos: cooper.sos,
-      currentHfa: cooper.currentHfa,
-      leagueCurrentPpg: cooper.leagueCurrentPpg,
+      adjustedComposite: rating.adjustedComposite,
     };
   });
 }
