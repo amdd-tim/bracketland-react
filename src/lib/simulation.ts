@@ -1,10 +1,10 @@
 import type { Matchup, Team } from './types';
 
-const RATING_SCALE = 10;
+const ELO_SCALE = 400;
 
 function winProbability(teamA: Team, teamB: Team): number {
   const diff = teamA.adjustedComposite - teamB.adjustedComposite;
-  return 1 / (1 + Math.pow(10, -diff / RATING_SCALE));
+  return 1 / (1 + Math.pow(10, -diff / ELO_SCALE));
 }
 
 export function getMatchupWinProbabilities(matchup: Matchup): {
