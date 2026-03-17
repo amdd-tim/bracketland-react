@@ -107,10 +107,13 @@ pre {
 
   main {
     max-width: none;
-    padding: 0.5in;
+    padding: 0;
   }
 
   button {
+    display: none;
+  }
+  .app-header {
     display: none;
   }
 }

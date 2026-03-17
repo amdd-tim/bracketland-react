@@ -284,3 +284,11 @@
   font-weight: 700;
   background: #f3f3f3;
 }
+
+@media  print {
+  
+  .teamLogo,
+  .teamProbability {
+    display: none;
+  }
+}
